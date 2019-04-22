@@ -27,7 +27,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="less">
 .carousel {
   img {
     height: 300px !important;
