@@ -16,6 +16,14 @@
             span Season :
           b-col.vertical-center(md="6")
             b-form-select(v-model="selectedSeason" :options="seasonList" @change="changeCondition")
+    br
+    div
+      b-table(
+        striped
+        hover
+        :items="teamList"
+        :fields="fields"
+      )
 </template>
 
 <script>
@@ -23,9 +31,48 @@ export default {
   name: 'Standings',
   data () {
     return {
-      selectedLeague: 'EPL',
+      teamList: [],
+      fields: [
+        {
+          key: 'position'
+        },
+        {
+          key: 'team'
+        },
+        {
+          key: 'points'
+        },
+        {
+          key: 'matches_played',
+          label: 'matches'
+        },
+        {
+          key: 'wins'
+        },
+        {
+          key: 'draws'
+        },
+        {
+          key: 'losts'
+        },
+        {
+          key: 'scores'
+        },
+        {
+          key: 'conceded'
+        },
+        {
+          key: 'goal_difference',
+          label: 'goal diff'
+        }
+      ],
+      selectedLeague: '',
       selectedSeason: '18-19',
       leagueList: [
+        {
+          text: 'SELECT',
+          value: ''
+        },
         {
           text: 'EPL',
           value: 'EPL'
@@ -61,6 +108,7 @@ export default {
   },
   methods: {
     changeCondition () {
+      this.teamList = []
       const option = this.selectedLeague
       let url = null
       switch (option) {
@@ -85,7 +133,21 @@ export default {
       this.$http.get(url)
         .then((res) => {
           if (res.data.data && res.data.data.statusCode === '200') {
-            console.log(res.data.data.standings)
+            let standings = res.data.data.standings
+            standings.forEach((team) => {
+              let tempTeam = {
+                ...team,
+                wins: team.overall.wins,
+                losts: team.overall.losts,
+                draws: team.overall.draws,
+                scores: team.overall.scores,
+                conceded: team.overall.conceded,
+                matches_played: team.overall.matches_played,
+                points: team.overall.points,
+                goal_difference: team.overall.goal_difference
+              }
+              this.teamList.push(tempTeam)
+            })
           }
         })
     }
