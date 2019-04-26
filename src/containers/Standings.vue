@@ -1,29 +1,20 @@
 <template lang="pug">
 #standings
-  br
-  b-container
-    b-row(align-h="start")
-      b-col(md="6")
-      b-col(md="3")
-        b-row
-          b-col.vertical-center(md="4")
-            span League :
-          b-col.vertical-center(md="6")
-            b-form-select(v-model="selectedLeague" :options="leagueList" @change="changeCondition")
-      b-col(md="3")
-        b-row
-          b-col.vertical-center(md="4")
-            span Season :
-          b-col.vertical-center(md="6")
-            b-form-select(v-model="selectedSeason" :options="seasonList" @change="changeCondition")
-    br
-    div
-      b-table(
-        striped
-        hover
-        :items="teamList"
-        :fields="fields"
-      )
+  .search-condition
+    b-form-select.select(v-model="selectedLeague" :options="leagueList")
+    b-form-select.select(v-model="selectedSeason" :options="seasonList")
+    b-button(variant="info" @click="onSearch") 조회
+  .table-wrapper
+    b-table(
+      striped
+      bordered
+      :items="teamList"
+      :fields="fields"
+      :busy="isLoading"
+    )
+      div(slot="table-busy" class="text-center text-info my-2")
+        b-spinner.align-middle
+          strong Loading...
 </template>
 
 <script>
@@ -31,48 +22,62 @@ export default {
   name: 'Standings',
   data () {
     return {
+      isLoading: false,
       teamList: [],
       fields: [
         {
-          key: 'position'
+          key: 'position',
+          label: '순위',
+          class: 'text-center'
         },
         {
-          key: 'team'
+          key: 'team',
+          label: '팀'
         },
         {
-          key: 'points'
+          key: 'points',
+          label: '승점',
+          class: 'text-center'
         },
         {
           key: 'matches_played',
-          label: 'matches'
+          label: '경기',
+          class: 'text-center'
         },
         {
-          key: 'wins'
+          key: 'wins',
+          label: '승',
+          class: 'text-center'
         },
         {
-          key: 'draws'
+          key: 'draws',
+          label: '무',
+          class: 'text-center'
         },
         {
-          key: 'losts'
+          key: 'losts',
+          label: '패',
+          class: 'text-center'
         },
         {
-          key: 'scores'
+          key: 'scores',
+          label: '득점',
+          class: 'text-center'
         },
         {
-          key: 'conceded'
+          key: 'conceded',
+          label: '실점',
+          class: 'text-center'
         },
         {
           key: 'goal_difference',
-          label: 'goal diff'
+          label: '득실',
+          class: 'text-center'
         }
       ],
-      selectedLeague: '',
+      selectedLeague: 'EPL',
       selectedSeason: '18-19',
       leagueList: [
-        {
-          text: 'SELECT',
-          value: ''
-        },
         {
           text: 'EPL',
           value: 'EPL'
@@ -107,7 +112,7 @@ export default {
     }
   },
   methods: {
-    changeCondition () {
+    onSearch () {
       this.teamList = []
       const option = this.selectedLeague
       let url = null
@@ -130,6 +135,7 @@ export default {
       if (!url) {
         return false
       }
+      this.isLoading = true
       this.$http.get(url)
         .then((res) => {
           if (res.data.data && res.data.data.statusCode === '200') {
@@ -146,18 +152,40 @@ export default {
                 points: team.overall.points,
                 goal_difference: team.overall.goal_difference
               }
+              this.isLoading = false
               this.teamList.push(tempTeam)
             })
           }
+        })
+        .catch((error) => {
+          console.log(error)
+          this.isLoading = false
         })
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
-  .vertical-center {
-    display: flex;
-    align-items: center;
+<style lang="less">
+  #standings {
+    & > .search-condition {
+      margin: 50px 20px 30px 20px;
+      padding: 20px 30px;
+      background-image: linear-gradient(to right top, #464646, #6d6d6d, #979797, #c4c4c4, #f2f2f2);
+      border-radius: 10px;
+
+      & > .select {
+        width: 200px;
+        margin-right: 10px;
+      }
+    }
+
+    & > .table-wrapper {
+      margin: 0 20px 50px 20px;
+
+      th {
+        background-color: lightcyan;
+      }
+    }
   }
 </style>

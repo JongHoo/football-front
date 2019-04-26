@@ -1,18 +1,18 @@
 <template lang="pug">
 #app
   b-navbar(
-  toggleable="lg"
-  type="dark"
-  variant="info"
+    toggleable="lg"
+    type="dark"
+    variant="info"
   )
     b-navbar-brand
-      span(@click="() => movePage('/')" :style="{ cursor: 'pointer'}") FootBall
+      span(@click="() => movePage('/')" :style="{ cursor: 'pointer'}") 해축해축
     b-navbar-toggle(target="nav-collapse")
     b-collapse(id="nav-collapse" is-nav)
       b-navbar-nav
         b-nav-item
-          span(@click="() => movePage('standings')") Standings
-        b-nav-item Calendar
+          span(@click="() => movePage('standings')") 순위
+        <!--b-nav-item Calendar-->
       b-navbar-nav.ml-auto
         b-nav-item-dropdown(:text="userNm" right)
           b-dropdown-item Profile
@@ -36,8 +36,7 @@ export default {
 }
 </script>
 
-<style>
-#app {
-
-}
+<style lang="less">
+  #app {
+  }
 </style>
