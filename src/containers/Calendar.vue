@@ -28,7 +28,7 @@ export default {
       matchList: [],
       selectedSeason: '18-19',
       selectedLeague: 'premier-league',
-      selectedTeam: 'blfamr89lxeyywtsraiqzq5p5zuz57i6', // chelsea
+      selectedTeam: '', // chelsea
       teamList: [],
       leagueList: [
         {
@@ -94,7 +94,7 @@ export default {
   methods: {
     changeLeague () {
       this.teamList = []
-      let url = `http://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
+      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
       if (!url) {
         return false
       }
@@ -123,7 +123,7 @@ export default {
         return
       }
       this.matchList = []
-      let url = `http://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
+      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
       if (!url) {
         return false
       }

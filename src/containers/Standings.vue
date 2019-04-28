@@ -119,16 +119,16 @@ export default {
       let url = null
       switch (option) {
         case 'EPL':
-          url = `http://soccer.sportsopendata.net/v1/leagues/premier-league/seasons/${this.selectedSeason}/standings`
+          url = `https://soccer.sportsopendata.net/v1/leagues/premier-league/seasons/${this.selectedSeason}/standings`
           break
         case 'LALIGA':
-          url = `http://soccer.sportsopendata.net/v1/leagues/liga/seasons/${this.selectedSeason}/standings`
+          url = `https://soccer.sportsopendata.net/v1/leagues/liga/seasons/${this.selectedSeason}/standings`
           break
         case 'SERIEA':
-          url = `http://soccer.sportsopendata.net/v1/leagues/serie-a/seasons/${this.selectedSeason}/standings`
+          url = `https://soccer.sportsopendata.net/v1/leagues/serie-a/seasons/${this.selectedSeason}/standings`
           break
         case 'EREDIVISIE':
-          url = `http://soccer.sportsopendata.net/v1/leagues/eredivisie/seasons/${this.selectedSeason}/standings`
+          url = `https://soccer.sportsopendata.net/v1/leagues/eredivisie/seasons/${this.selectedSeason}/standings`
           break
         default:
           url = ''
