@@ -12,7 +12,8 @@
       b-navbar-nav
         b-nav-item
           span(@click="() => movePage('standings')") 순위
-        <!--b-nav-item Calendar-->
+        b-nav-item
+          span(@click="() => movePage('calendar')") 일정
       b-navbar-nav.ml-auto
         b-nav-item-dropdown(:text="userNm" right)
           b-dropdown-item Profile

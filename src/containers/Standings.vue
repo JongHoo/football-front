@@ -1,12 +1,13 @@
 <template lang="pug">
 #standings
   .search-condition
-    b-form-select.select(v-model="selectedLeague" :options="leagueList")
     b-form-select.select(v-model="selectedSeason" :options="seasonList")
+    b-form-select.select(v-model="selectedLeague" :options="leagueList")
     b-button(variant="info" @click="onSearch") 조회
   .table-wrapper
     b-table(
       striped
+      small
       bordered
       :items="teamList"
       :fields="fields"
@@ -24,6 +25,8 @@ export default {
     return {
       isLoading: false,
       teamList: [],
+      selectedSeason: '18-19',
+      selectedLeague: 'EPL',
       fields: [
         {
           key: 'position',
@@ -75,8 +78,6 @@ export default {
           class: 'text-center'
         }
       ],
-      selectedLeague: 'EPL',
-      selectedSeason: '18-19',
       leagueList: [
         {
           text: 'EPL',
@@ -136,6 +137,7 @@ export default {
         return false
       }
       this.isLoading = true
+
       this.$http.get(url)
         .then((res) => {
           if (res.data.data && res.data.data.statusCode === '200') {
@@ -155,6 +157,8 @@ export default {
               this.isLoading = false
               this.teamList.push(tempTeam)
             })
+          } else {
+            this.isLoading = false
           }
         })
         .catch((error) => {

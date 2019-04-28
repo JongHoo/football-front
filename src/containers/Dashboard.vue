@@ -14,7 +14,7 @@
     )
     b-carousel-slide.slide2(
       img-blank
-      caption="팀별 일정 (서비스예정)"
+      caption="팀별 일정"
       text="여러분들이 좋아하는 팀들의 일정과 결과를 체크하세요."
     )
 
