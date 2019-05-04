@@ -14,16 +14,16 @@
       hide-actions
       :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td {{ props.item.position }}
+        td(class="text-xs-center") {{ props.item.position }}
         td {{ props.item.team }}
-        td {{ props.item.points }}
-        td {{ props.item.matches_played }}
-        td {{ props.item.wins }}
-        td {{ props.item.draws }}
-        td {{ props.item.losts }}
-        td {{ props.item.scores }}
-        td {{ props.item.conceded }}
-        td {{ props.item.goal_difference }}
+        td(class="text-xs-center") {{ props.item.points }}
+        td(class="text-xs-center") {{ props.item.matches_played }}
+        td(class="text-xs-center") {{ props.item.wins }}
+        td(class="text-xs-center") {{ props.item.draws }}
+        td(class="text-xs-center") {{ props.item.losts }}
+        td(class="text-xs-center") {{ props.item.scores }}
+        td(class="text-xs-center") {{ props.item.conceded }}
+        td(class="text-xs-center") {{ props.item.goal_difference }}
 </template>
 
 <script>
@@ -41,6 +41,7 @@ export default {
         {
           value: 'position',
           text: '순위',
+          align: 'center',
           fixed: true
         },
         {
@@ -50,35 +51,43 @@ export default {
         },
         {
           value: 'points',
-          text: '승점'
+          text: '승점',
+          align: 'center'
         },
         {
           value: 'matches_played',
-          text: '경기'
+          text: '경기',
+          align: 'center'
         },
         {
           value: 'wins',
-          text: '승'
+          text: '승',
+          align: 'center'
         },
         {
           value: 'draws',
-          text: '무'
+          text: '무',
+          align: 'center'
         },
         {
           value: 'losts',
-          text: '패'
+          text: '패',
+          align: 'center'
         },
         {
           value: 'scores',
-          text: '득점'
+          text: '득점',
+          align: 'center'
         },
         {
           value: 'conceded',
-          text: '실점'
+          text: '실점',
+          align: 'center'
         },
         {
           value: 'goal_difference',
-          text: '득실'
+          text: '득실',
+          align: 'center'
         }
       ],
       leagueList: [
@@ -156,7 +165,7 @@ export default {
 <style lang="less">
   #standings {
     & > .search-condition {
-      margin: 20px;
+      margin-bottom: 20px;
       background-image: linear-gradient(to right top, #edf4ff, #c8dcff, #a8c3ff, #8ea9ff, #7a8dff);
       border-radius: 10px;
       padding: 10px;
@@ -175,10 +184,6 @@ export default {
       .v-btn {
         position: relative;
       }
-    }
-
-    & > .table-wrapper {
-      margin: 0 20px 50px 20px;
     }
   }
 </style>

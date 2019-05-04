@@ -28,7 +28,6 @@ export default {
 
 <style lang="less">
   .carousel {
-    margin: 20px;
     img {
       height: 200px !important;
     }

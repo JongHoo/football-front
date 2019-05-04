@@ -13,11 +13,11 @@
     hide-actions
     :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td {{ props.item.name }}
-        td {{ props.item.match_dtm }}
-        td {{ props.item.home_team }}
-        td {{ props.item.match_result }}
-        td {{ props.item.away_team }}
+        td(class="text-xs-center") {{ props.item.round_no }}
+        td(class="text-xs-center") {{ props.item.match_dtm }}
+        td(class="text-xs-center") {{ props.item.home_team }}
+        td(class="text-xs-center") {{ props.item.match_result }}
+        td(class="text-xs-center") {{ props.item.away_team }}
 </template>
 
 <script>
@@ -69,27 +69,35 @@ export default {
       ],
       fields: [
         {
-          value: 'name',
+          value: 'round_no',
           text: '라운드',
-          sortable: false
+          width: '100px',
+          align: 'center'
         },
         {
           value: 'match_dtm',
-          text: '일시'
+          text: '일시',
+          width: '100px',
+          align: 'center',
+          sortable: false
         },
         {
           value: 'home_team',
           text: '홈팀',
-          sortable: false
+          sortable: false,
+          align: 'center'
         },
         {
           value: 'match_result',
           text: '스코어',
+          width: '100px',
+          align: 'center',
           sortable: false
         },
         {
           value: 'away_team',
           text: '원정팀',
+          align: 'center',
           sortable: false
         }
       ]
@@ -141,7 +149,8 @@ export default {
               let korDtm = new Date(tempDtm.setHours(tempDtm.getHours() + 9))
               let tempRound = {
                 ...round,
-                match_dtm: korDtm.toISOString().replace('T', ' ').substr(0, 16)
+                round_no: round.round_slug.split('-')[1],
+                match_dtm: korDtm.toISOString().replace('T', ' ').substr(5, 11)
               }
               this.matchList.push(tempRound)
             })
@@ -166,7 +175,7 @@ export default {
 <style lang="less">
  #calendar {
    & > .search-condition {
-     margin: 20px;
+     margin-bottom: 20px;
      background-image: linear-gradient(to right top, #edf4ff, #c8dcff, #a8c3ff, #8ea9ff, #7a8dff);
      border-radius: 10px;
      padding: 10px;
@@ -185,10 +194,6 @@ export default {
      .v-btn {
        position: relative;
      }
-   }
-
-   & > .table-wrapper {
-     margin: 0 20px 50px 20px;
    }
  }
 </style>

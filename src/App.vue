@@ -9,7 +9,8 @@
           span 순위
         v-btn(flat class="white--text" @click="() => movePage('calendar')")
           span 일정
-    router-view
+    .router-wrapper
+      router-view
 </template>
 
 <script>
@@ -32,6 +33,14 @@ export default {
   #app {
     .v-toolbar__title {
       margin-right: 30px;
+    }
+
+    .router-wrapper {
+      /*width: calc(100% - 20px);*/
+      width: 100%;
+      max-width: 1024px;
+      padding: 10px;
+      align-self: center;
     }
   }
 </style>
