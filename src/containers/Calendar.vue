@@ -5,6 +5,8 @@
     v-select.select(:items="leagueList" v-model="selectedLeague" @change="changeLeague")
     v-select.select(:items="teamList" v-model="selectedTeam")
     v-btn(color="info" @click="onSearch") 조회
+  .legue-logo-wrapper
+    img(:src="getLeagueLogo(selectedLeague)" height="50px")
   .table-wrapper
     v-data-table(
     :headers="fields"
@@ -163,6 +165,10 @@ export default {
           console.log(err)
           this.isLoading = false
         })
+    },
+    getLeagueLogo (selectedLeague) {
+      let images = require.context('../assets/logos/', false, /\.png$/)
+      return images(`./${selectedLeague}.png`)
     }
   },
 
@@ -175,7 +181,7 @@ export default {
 <style lang="less">
  #calendar {
    & > .search-condition {
-     margin-bottom: 20px;
+     margin-bottom: 10px;
      background-image: linear-gradient(to right top, #edf4ff, #c8dcff, #a8c3ff, #8ea9ff, #7a8dff);
      border-radius: 10px;
      padding: 10px;

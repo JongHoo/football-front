@@ -5,7 +5,7 @@
     v-select.select(:items="leagueList" v-model="selectedLeague")
     v-btn(color="info" @click="onSearch") 조회
   .legue-logo-wrapper
-    <!--img(:src="leagueLogo")-->
+    img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
     v-data-table(
       :headers="fields"
@@ -34,6 +34,7 @@ export default {
       pagination: {},
       isLoading: false,
       teamList: [],
+      nextLeague: 'premier-league',
       selectedSeason: '18-19',
       selectedLeague: 'premier-league',
       leagueLogo: `../assets/logos/${this.selectedLeague}.png`,
@@ -131,6 +132,7 @@ export default {
   methods: {
     onSearch () {
       this.teamList = []
+      this.nextLeague = this.selectedLeague
       let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/standings`
       if (!url) {
         return false
@@ -157,6 +159,10 @@ export default {
           console.log(error)
           this.isLoading = false
         })
+    },
+    getLeagueLogo (league) {
+      let images = require.context('../assets/logos/', false, /\.png$/)
+      return images(`./${league}.png`)
     }
   }
 }
@@ -165,7 +171,7 @@ export default {
 <style lang="less">
   #standings {
     & > .search-condition {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       background-image: linear-gradient(to right top, #edf4ff, #c8dcff, #a8c3ff, #8ea9ff, #7a8dff);
       border-radius: 10px;
       padding: 10px;
