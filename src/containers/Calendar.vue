@@ -6,7 +6,7 @@
     v-select.select(:items="teamList" v-model="selectedTeam")
     v-btn(color="info" @click="onSearch") 조회
   .legue-logo-wrapper
-    img(:src="getLeagueLogo(selectedLeague)" height="50px")
+    img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
     v-data-table(
     :headers="fields"
@@ -20,6 +20,14 @@
         td(class="text-xs-center") {{ props.item.home_team }}
         td(class="text-xs-center") {{ props.item.match_result }}
         td(class="text-xs-center") {{ props.item.away_team }}
+  .text-xs-center
+    v-dialog(v-model="isDialog" width="300")
+      v-card
+        v-card-title(class="headline" primary-title) Error
+        v-card-text 팀을 선택하세요.
+        v-card-actions
+          v-spacer
+          v-btn(color="green" flat="flat" @click="isDialog=false") OK
 </template>
 
 <script>
@@ -28,7 +36,9 @@ export default {
   data () {
     return {
       isLoading: false,
+      isDialog: false,
       matchList: [],
+      nextLeague: 'premier-league',
       selectedSeason: '18-19',
       selectedLeague: 'premier-league',
       selectedTeam: '',
@@ -133,10 +143,12 @@ export default {
 
     onSearch () {
       if (!this.selectedTeam) {
-        alert('팀을 선택하세요')
+        // alert('팀을 선택하세요')
+        this.isDialog = true
         return
       }
       this.matchList = []
+      this.nextLeague = this.selectedLeague
       let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
       if (!url) {
         return false
@@ -166,9 +178,9 @@ export default {
           this.isLoading = false
         })
     },
-    getLeagueLogo (selectedLeague) {
+    getLeagueLogo (league) {
       let images = require.context('../assets/logos/', false, /\.png$/)
-      return images(`./${selectedLeague}.png`)
+      return images(`./${league}.png`)
     }
   },
 
