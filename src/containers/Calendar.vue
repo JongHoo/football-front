@@ -143,7 +143,6 @@ export default {
 
     onSearch () {
       if (!this.selectedTeam) {
-        // alert('팀을 선택하세요')
         this.isDialog = true
         return
       }

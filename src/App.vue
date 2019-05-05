@@ -11,6 +11,9 @@
           span 일정
     .router-wrapper
       router-view
+    v-footer
+      v-card.flex(flat tile)
+        v-card-actions.grey.darken-3.justify-center &copy;2019 - JongHoo Hwang
 </template>
 
 <script>
@@ -36,11 +39,14 @@ export default {
     }
 
     .router-wrapper {
-      /*width: calc(100% - 20px);*/
       width: 100%;
       max-width: 1024px;
+      min-height: calc(100vh - 101px);
       padding: 10px;
       align-self: center;
+    }
+    .v-card__actions {
+      color: #ffffff;
     }
   }
 </style>

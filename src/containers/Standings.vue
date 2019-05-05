@@ -43,11 +43,13 @@ export default {
           value: 'position',
           text: '순위',
           align: 'center',
+          width: '100px',
           fixed: true
         },
         {
           value: 'team',
           text: '팀',
+          width: '100px',
           fixed: true
         },
         {
