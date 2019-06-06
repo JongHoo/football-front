@@ -31,6 +31,7 @@ export default {
   name: 'Standings',
   data () {
     return {
+      LEAGUE_URL: 'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues',
       pagination: {},
       isLoading: false,
       teamList: [],
@@ -93,32 +94,7 @@ export default {
           align: 'center'
         }
       ],
-      leagueList: [
-        {
-          text: 'EPL',
-          value: 'premier-league'
-        },
-        {
-          text: 'La Liga',
-          value: 'liga'
-        },
-        {
-          text: 'Serie A',
-          value: 'serie-a'
-        },
-        {
-          text: 'Bundesliga',
-          value: 'bundesliga'
-        },
-        {
-          text: 'Ligue 1',
-          value: 'ligue1'
-        },
-        {
-          text: 'Eredivisie',
-          value: 'eredivisie'
-        }
-      ],
+      leagueList: [],
       seasonList: [
         {
           text: '17-18',
@@ -165,7 +141,28 @@ export default {
     getLeagueLogo (league) {
       let images = require.context('../assets/logos/', false, /\.png$/)
       return images(`./${league}.png`)
+    },
+    getLeagueList () {
+      this.$http.get(this.LEAGUE_URL)
+        .then(res => {
+          res.data.forEach(item => {
+            this.leagueList.push(
+              {
+                text: item.name,
+                value: item.short_name
+              }
+            )
+          })
+          this.selectedLeague = 'premier-league'
+        })
+        .catch(err => {
+          console.log(err)
+          this.isLoading = false
+        })
     }
+  },
+  created () {
+    this.getLeagueList()
   }
 }
 </script>
