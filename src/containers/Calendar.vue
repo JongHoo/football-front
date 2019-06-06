@@ -1,22 +1,33 @@
 <template lang="pug">
 #calendar
   .search-condition
-    b-form-select.select(v-model="selectedSeason" :options="seasonList")
-    b-form-select.select(v-model="selectedLeague" :options="leagueList" @change="changeLeague")
-    b-form-select.select(v-model="selectedTeam" :options="teamList")
-    b-button(variant="info" @click="onSearch") 조회
+    v-select.select(:items="seasonList" v-model="selectedSeason" @change="changeLeague")
+    v-select.select(:items="leagueList" v-model="selectedLeague" @change="changeLeague")
+    v-select.select(:items="teamList" v-model="selectedTeam")
+    v-btn(color="info" @click="onSearch") 조회
+  .legue-logo-wrapper
+    img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
-    b-table(
-    striped
-    small
-    bordered
+    v-data-table(
+    :headers="fields"
     :items="matchList"
-    :fields="fields"
-    :busy="isLoading"
-    )
-      div(slot="table-busy" class="text-center text-info my-2")
-        b-spinner.align-middle
-          strong Loading...
+    no-data-text="No Data"
+    hide-actions
+    :loading="isLoading")
+      template(slot="items" slot-scope="props")
+        td(class="text-xs-center") {{ props.item.round_no }}
+        td(class="text-xs-center") {{ props.item.match_dtm }}
+        td(class="text-xs-center") {{ props.item.home_team }}
+        td(class="text-xs-center") {{ props.item.match_result }}
+        td(class="text-xs-center") {{ props.item.away_team }}
+  .text-xs-center
+    v-dialog(v-model="isDialog" width="300")
+      v-card
+        v-card-title(class="headline" primary-title) Error
+        v-card-text 팀을 선택하세요.
+        v-card-actions
+          v-spacer
+          v-btn(color="green" flat="flat" @click="isDialog=false") OK
 </template>
 
 <script>
@@ -25,10 +36,12 @@ export default {
   data () {
     return {
       isLoading: false,
+      isDialog: false,
       matchList: [],
+      nextLeague: 'premier-league',
       selectedSeason: '18-19',
       selectedLeague: 'premier-league',
-      selectedTeam: 'blfamr89lxeyywtsraiqzq5p5zuz57i6', // chelsea
+      selectedTeam: '',
       teamList: [],
       leagueList: [
         {
@@ -44,15 +57,19 @@ export default {
           value: 'serie-a'
         },
         {
+          text: 'Bundesliga',
+          value: 'bundesliga'
+        },
+        {
+          text: 'Ligue 1',
+          value: 'ligue1'
+        },
+        {
           text: 'Eredivisie',
           value: 'eredivisie'
         }
       ],
       seasonList: [
-        {
-          text: '16-17',
-          value: '16-17'
-        },
         {
           text: '17-18',
           value: '17-18'
@@ -64,29 +81,36 @@ export default {
       ],
       fields: [
         {
-          key: 'name',
-          label: '라운드',
-          class: 'text-center'
+          value: 'round_no',
+          text: '라운드',
+          width: '100px',
+          align: 'center'
         },
         {
-          key: 'match_dtm',
-          label: '일시',
-          class: 'text-center'
+          value: 'match_dtm',
+          text: '일시',
+          width: '100px',
+          align: 'center',
+          sortable: false
         },
         {
-          key: 'home_team',
-          label: '홈팀',
-          class: 'text-center'
+          value: 'home_team',
+          text: '홈팀',
+          sortable: false,
+          align: 'center'
         },
         {
-          key: 'match_result',
-          label: '스코어',
-          class: 'text-center'
+          value: 'match_result',
+          text: '스코어',
+          width: '100px',
+          align: 'center',
+          sortable: false
         },
         {
-          key: 'away_team',
-          label: '원정팀',
-          class: 'text-center'
+          value: 'away_team',
+          text: '원정팀',
+          align: 'center',
+          sortable: false
         }
       ]
     }
@@ -94,7 +118,7 @@ export default {
   methods: {
     changeLeague () {
       this.teamList = []
-      let url = `http://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
+      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
       if (!url) {
         return false
       }
@@ -119,11 +143,12 @@ export default {
 
     onSearch () {
       if (!this.selectedTeam) {
-        alert('팀을 선택하세요')
+        this.isDialog = true
         return
       }
       this.matchList = []
-      let url = `http://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
+      this.nextLeague = this.selectedLeague
+      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
       if (!url) {
         return false
       }
@@ -137,7 +162,8 @@ export default {
               let korDtm = new Date(tempDtm.setHours(tempDtm.getHours() + 9))
               let tempRound = {
                 ...round,
-                match_dtm: korDtm.toISOString().replace('T', ' ').substr(0, 16)
+                round_no: round.round_slug.split('-')[1],
+                match_dtm: korDtm.toISOString().replace('T', ' ').substr(5, 11)
               }
               this.matchList.push(tempRound)
             })
@@ -150,6 +176,10 @@ export default {
           console.log(err)
           this.isLoading = false
         })
+    },
+    getLeagueLogo (league) {
+      let images = require.context('../assets/logos/', false, /\.png$/)
+      return images(`./${league}.png`)
     }
   },
 
@@ -162,22 +192,24 @@ export default {
 <style lang="less">
  #calendar {
    & > .search-condition {
-     margin: 50px 20px 30px 20px;
-     padding: 20px 30px;
-     background-image: linear-gradient(to right top, #464646, #6d6d6d, #979797, #c4c4c4, #f2f2f2);
+     margin-bottom: 10px;
+     background-image: linear-gradient(to right top, #edf4ff, #c8dcff, #a8c3ff, #8ea9ff, #7a8dff);
      border-radius: 10px;
+     padding: 10px;
 
      & > .select {
-       width: 200px;
-       margin-right: 10px;
+       width: 130px;
+       margin-left: 10px;
+       float: left;
+       padding: 0;
+       .v-input__control {
+         height: 30px;
+         min-height: 30px;
+       }
      }
-   }
 
-   & > .table-wrapper {
-     margin: 0 20px 50px 20px;
-
-     th {
-       background-color: lightcyan;
+     .v-btn {
+       position: relative;
      }
    }
  }

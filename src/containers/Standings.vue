@@ -1,21 +1,29 @@
 <template lang="pug">
 #standings
   .search-condition
-    b-form-select.select(v-model="selectedSeason" :options="seasonList")
-    b-form-select.select(v-model="selectedLeague" :options="leagueList")
-    b-button(variant="info" @click="onSearch") 조회
+    v-select.select(:items="seasonList" v-model="selectedSeason")
+    v-select.select(:items="leagueList" v-model="selectedLeague")
+    v-btn(color="info" @click="onSearch") 조회
+  .legue-logo-wrapper
+    img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
-    b-table(
-      striped
-      small
-      bordered
+    v-data-table(
+      :headers="fields"
       :items="teamList"
-      :fields="fields"
-      :busy="isLoading"
-    )
-      div(slot="table-busy" class="text-center text-info my-2")
-        b-spinner.align-middle
-          strong Loading...
+      no-data-text="No Data"
+      hide-actions
+      :loading="isLoading")
+      template(slot="items" slot-scope="props")
+        td(class="text-xs-center") {{ props.item.position }}
+        td {{ props.item.team }}
+        td(class="text-xs-center") {{ props.item.points }}
+        td(class="text-xs-center") {{ props.item.matches_played }}
+        td(class="text-xs-center") {{ props.item.wins }}
+        td(class="text-xs-center") {{ props.item.draws }}
+        td(class="text-xs-center") {{ props.item.losts }}
+        td(class="text-xs-center") {{ props.item.scores }}
+        td(class="text-xs-center") {{ props.item.conceded }}
+        td(class="text-xs-center") {{ props.item.goal_difference }}
 </template>
 
 <script>
@@ -23,84 +31,71 @@ export default {
   name: 'Standings',
   data () {
     return {
+      LEAGUE_URL: 'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues',
+      pagination: {},
       isLoading: false,
       teamList: [],
+      nextLeague: 'premier-league',
       selectedSeason: '18-19',
-      selectedLeague: 'EPL',
+      selectedLeague: 'premier-league',
+      leagueLogo: `../assets/logos/${this.selectedLeague}.png`,
       fields: [
         {
-          key: 'position',
-          label: '순위',
-          class: 'text-center'
+          value: 'position',
+          text: '순위',
+          align: 'center',
+          width: '100px',
+          fixed: true
         },
         {
-          key: 'team',
-          label: '팀'
+          value: 'team',
+          text: '팀',
+          width: '100px',
+          fixed: true
         },
         {
-          key: 'points',
-          label: '승점',
-          class: 'text-center'
+          value: 'points',
+          text: '승점',
+          align: 'center'
         },
         {
-          key: 'matches_played',
-          label: '경기',
-          class: 'text-center'
+          value: 'matches_played',
+          text: '경기',
+          align: 'center'
         },
         {
-          key: 'wins',
-          label: '승',
-          class: 'text-center'
+          value: 'wins',
+          text: '승',
+          align: 'center'
         },
         {
-          key: 'draws',
-          label: '무',
-          class: 'text-center'
+          value: 'draws',
+          text: '무',
+          align: 'center'
         },
         {
-          key: 'losts',
-          label: '패',
-          class: 'text-center'
+          value: 'losts',
+          text: '패',
+          align: 'center'
         },
         {
-          key: 'scores',
-          label: '득점',
-          class: 'text-center'
+          value: 'scores',
+          text: '득점',
+          align: 'center'
         },
         {
-          key: 'conceded',
-          label: '실점',
-          class: 'text-center'
+          value: 'conceded',
+          text: '실점',
+          align: 'center'
         },
         {
-          key: 'goal_difference',
-          label: '득실',
-          class: 'text-center'
+          value: 'goal_difference',
+          text: '득실',
+          align: 'center'
         }
       ],
-      leagueList: [
-        {
-          text: 'EPL',
-          value: 'EPL'
-        },
-        {
-          text: 'La Liga',
-          value: 'LALIGA'
-        },
-        {
-          text: 'Serie A',
-          value: 'SERIEA'
-        },
-        {
-          text: 'Eredivisie',
-          value: 'EREDIVISIE'
-        }
-      ],
+      leagueList: [],
       seasonList: [
-        {
-          text: '16-17',
-          value: '16-17'
-        },
         {
           text: '17-18',
           value: '17-18'
@@ -115,24 +110,8 @@ export default {
   methods: {
     onSearch () {
       this.teamList = []
-      const option = this.selectedLeague
-      let url = null
-      switch (option) {
-        case 'EPL':
-          url = `http://soccer.sportsopendata.net/v1/leagues/premier-league/seasons/${this.selectedSeason}/standings`
-          break
-        case 'LALIGA':
-          url = `http://soccer.sportsopendata.net/v1/leagues/liga/seasons/${this.selectedSeason}/standings`
-          break
-        case 'SERIEA':
-          url = `http://soccer.sportsopendata.net/v1/leagues/serie-a/seasons/${this.selectedSeason}/standings`
-          break
-        case 'EREDIVISIE':
-          url = `http://soccer.sportsopendata.net/v1/leagues/eredivisie/seasons/${this.selectedSeason}/standings`
-          break
-        default:
-          url = ''
-      }
+      this.nextLeague = this.selectedLeague
+      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/standings`
       if (!url) {
         return false
       }
@@ -145,14 +124,7 @@ export default {
             standings.forEach((team) => {
               let tempTeam = {
                 ...team,
-                wins: team.overall.wins,
-                losts: team.overall.losts,
-                draws: team.overall.draws,
-                scores: team.overall.scores,
-                conceded: team.overall.conceded,
-                matches_played: team.overall.matches_played,
-                points: team.overall.points,
-                goal_difference: team.overall.goal_difference
+                ...team.overall
               }
               this.isLoading = false
               this.teamList.push(tempTeam)
@@ -165,7 +137,32 @@ export default {
           console.log(error)
           this.isLoading = false
         })
+    },
+    getLeagueLogo (league) {
+      let images = require.context('../assets/logos/', false, /\.png$/)
+      return images(`./${league}.png`)
+    },
+    getLeagueList () {
+      this.$http.get(this.LEAGUE_URL)
+        .then(res => {
+          res.data.forEach(item => {
+            this.leagueList.push(
+              {
+                text: item.name,
+                value: item.short_name
+              }
+            )
+          })
+          this.selectedLeague = 'premier-league'
+        })
+        .catch(err => {
+          console.log(err)
+          this.isLoading = false
+        })
     }
+  },
+  created () {
+    this.getLeagueList()
   }
 }
 </script>
@@ -173,22 +170,24 @@ export default {
 <style lang="less">
   #standings {
     & > .search-condition {
-      margin: 50px 20px 30px 20px;
-      padding: 20px 30px;
-      background-image: linear-gradient(to right top, #464646, #6d6d6d, #979797, #c4c4c4, #f2f2f2);
+      margin-bottom: 10px;
+      background-image: linear-gradient(to right top, #edf4ff, #c8dcff, #a8c3ff, #8ea9ff, #7a8dff);
       border-radius: 10px;
+      padding: 10px;
 
       & > .select {
-        width: 200px;
-        margin-right: 10px;
+        width: 130px;
+        margin-left: 10px;
+        float: left;
+        padding: 0;
+        .v-input__control {
+          height: 30px;
+          min-height: 30px;
+        }
       }
-    }
 
-    & > .table-wrapper {
-      margin: 0 20px 50px 20px;
-
-      th {
-        background-color: lightcyan;
+      .v-btn {
+        position: relative;
       }
     }
   }
