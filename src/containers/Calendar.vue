@@ -15,11 +15,12 @@
     hide-actions
     :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td(class="text-xs-center") {{ props.item.round_no }}
-        td(class="text-xs-center") {{ props.item.match_dtm }}
-        td(class="text-xs-center") {{ props.item.home_team }}
-        td(class="text-xs-center") {{ props.item.match_result }}
-        td(class="text-xs-center") {{ props.item.away_team }}
+        tr(v-bind:class="getResultColor(props.item)")
+          td(class="text-xs-center") {{ props.item.round_no }}
+          td(class="text-xs-center") {{ props.item.match_dtm }}
+          td(class="text-xs-center") {{ props.item.home_team }}
+          td(class="text-xs-center") {{ props.item.match_result }}
+          td(class="text-xs-center") {{ props.item.away_team }}
   .text-xs-center
     v-dialog(v-model="isDialog" width="300")
       v-card
@@ -42,6 +43,7 @@ export default {
       selectedSeason: '18-19',
       selectedLeague: 'premier-league',
       selectedTeam: '',
+      selectedTeamObj: {},
       teamList: [],
       leagueList: [
         {
@@ -118,15 +120,16 @@ export default {
   methods: {
     changeLeague () {
       this.teamList = []
-      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
+      // let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
+      const url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${this.selectedLeague}/${this.selectedSeason}`
       if (!url) {
         return false
       }
       this.$http.get(url)
         .then((res) => {
-          if (res.data.data && res.data.data.statusCode === '200') {
+          if (res && res.data) {
             this.teamList.push({text: '선택하세요', value: ''})
-            res.data.data.teams.forEach(team => {
+            res.data.forEach(team => {
               let tempTeam = {
                 text: team.name,
                 value: team.identifier
@@ -146,12 +149,10 @@ export default {
         this.isDialog = true
         return
       }
+
       this.matchList = []
       this.nextLeague = this.selectedLeague
       let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
-      if (!url) {
-        return false
-      }
       this.isLoading = true
 
       this.$http.get(url)
@@ -167,6 +168,7 @@ export default {
               }
               this.matchList.push(tempRound)
             })
+            this.changeSelectedTeamObj()
             this.isLoading = false
           } else {
             this.isLoading = false
@@ -180,6 +182,32 @@ export default {
     getLeagueLogo (league) {
       let images = require.context('../assets/logos/', false, /\.png$/)
       return images(`./${league}.png`)
+    },
+    changeSelectedTeamObj () {
+      let tempTeamList = this.teamList
+      this.selectedTeamObj = tempTeamList.filter(item => item.value === this.selectedTeam)[0]
+    },
+    getResultColor (round) {
+      let matchScore = round.match_result.split('-')
+      if (matchScore.length < 2) {
+        return 'NA'
+      }
+      if (matchScore[0] === matchScore[1]) {
+        return 'DRAW'
+      }
+      if (this.selectedTeamObj.text === round.home_team) {
+        if (matchScore[0] > matchScore[1]) {
+          return 'WIN'
+        } else {
+          return 'LOSE'
+        }
+      } else {
+        if (matchScore[0] < matchScore[1]) {
+          return 'WIN'
+        } else {
+          return 'LOSE'
+        }
+      }
     }
   },
 
@@ -210,6 +238,17 @@ export default {
 
      .v-btn {
        position: relative;
+     }
+   }
+   & > .table-wrapper {
+     .WIN {
+       background-image: linear-gradient(to right, #ffffff, #f3f6ff, #dfeeff, #c4e9ff, #a3e4ff, #a3e4ff, #a3e4ff, #a3e4ff, #c4e9ff, #dfeeff, #f3f6ff, #ffffff);
+     }
+     .LOSE {
+       background-image: linear-gradient(to right, #ffffff, #f6edfc, #f4daf4, #f8c5e4, #fdafcc, #fdafcc, #fdafcc, #fdafcc, #f8c5e4, #f4daf4, #f6edfc, #ffffff);
+     }
+     .DRAW {
+       background-image: linear-gradient(to right, #ffffff, #f5f5f5, #ececec, #e2e2e2, #d9d9d9, #d9d9d9, #d9d9d9, #d9d9d9, #e2e2e2, #ececec, #f5f5f5, #ffffff);
      }
    }
  }
