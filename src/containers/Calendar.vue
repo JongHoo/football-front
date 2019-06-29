@@ -120,15 +120,16 @@ export default {
   methods: {
     changeLeague () {
       this.teamList = []
-      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
+      // let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
+      const url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${this.selectedLeague}/${this.selectedSeason}`
       if (!url) {
         return false
       }
       this.$http.get(url)
         .then((res) => {
-          if (res.data.data && res.data.data.statusCode === '200') {
+          if (res && res.data) {
             this.teamList.push({text: '선택하세요', value: ''})
-            res.data.data.teams.forEach(team => {
+            res.data.forEach(team => {
               let tempTeam = {
                 text: team.name,
                 value: team.identifier
