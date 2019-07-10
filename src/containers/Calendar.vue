@@ -120,7 +120,6 @@ export default {
   methods: {
     changeLeague () {
       this.teamList = []
-      // let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/teams`
       const url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${this.selectedLeague}/${this.selectedSeason}`
       if (!url) {
         return false

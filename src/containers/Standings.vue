@@ -14,16 +14,16 @@
       hide-actions
       :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td(class="text-xs-center") {{ props.item.position }}
+        td.text-xs-center(v-bind:class="getUefaCtgry(nextLeague, props.item.position)") {{ props.item.position }}
         td {{ props.item.team }}
-        td(class="text-xs-center") {{ props.item.points }}
-        td(class="text-xs-center") {{ props.item.matches_played }}
-        td(class="text-xs-center") {{ props.item.wins }}
-        td(class="text-xs-center") {{ props.item.draws }}
-        td(class="text-xs-center") {{ props.item.losts }}
-        td(class="text-xs-center") {{ props.item.scores }}
-        td(class="text-xs-center") {{ props.item.conceded }}
-        td(class="text-xs-center") {{ props.item.goal_difference }}
+        td.text-xs-center {{ props.item.points }}
+        td.text-xs-center {{ props.item.matches_played }}
+        td.text-xs-center {{ props.item.wins }}
+        td.text-xs-center {{ props.item.draws }}
+        td.text-xs-center {{ props.item.losts }}
+        td.text-xs-center {{ props.item.scores }}
+        td.text-xs-center {{ props.item.conceded }}
+        td.text-xs-center {{ props.item.goal_difference }}
 </template>
 
 <script>
@@ -104,6 +104,18 @@ export default {
           text: '18-19',
           value: '18-19'
         }
+      ],
+      c4Leagues: [
+        'premier-league',
+        'liga',
+        'bundesliga',
+        'serie-a'
+      ],
+      c3Leagues: [
+        'ligue1'
+      ],
+      c2Leagues: [
+        'eredivisie'
       ]
     }
   },
@@ -159,6 +171,23 @@ export default {
           console.log(err)
           this.isLoading = false
         })
+    },
+    getUefaCtgry (league, position) {
+      if (this.c4Leagues.includes(league)) {
+        if (position <= 4) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+      } else if (this.c3Leagues.includes(league)) {
+        if (position <= 3) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+      } else if (this.c2Leagues.includes(league)) {
+        if (position <= 2) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+      } else {
+        return 'NA'
+      }
     }
   },
   created () {
@@ -188,6 +217,11 @@ export default {
 
       .v-btn {
         position: relative;
+      }
+    }
+    & > .table-wrapper {
+      .CHAMPIONS_LEAGUE {
+        background-image: linear-gradient(to right, #53b5ff, #99c4ff, #c6d5ff, #e7e9ff, #ffffff);
       }
     }
   }
