@@ -161,7 +161,7 @@ export default {
             this.leagueList.push(
               {
                 text: item.name,
-                value: item.short_name
+                value: item.league_id
               }
             )
           })

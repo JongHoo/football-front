@@ -16,7 +16,7 @@
     :loading="isLoading")
       template(slot="items" slot-scope="props")
         tr(v-bind:class="getResultColor(props.item)")
-          td(class="text-xs-center") {{ props.item.round_no }}
+          td(class="text-xs-center") {{ props.item.round }}
           td(class="text-xs-center") {{ props.item.match_dtm }}
           td(class="text-xs-center") {{ props.item.home_team }}
           td(class="text-xs-center") {{ props.item.match_result }}
@@ -36,41 +36,17 @@ export default {
   name: 'Calendar',
   data () {
     return {
+      LEAGUE_URL: 'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues',
       isLoading: false,
       isDialog: false,
       matchList: [],
       nextLeague: 'premier-league',
       selectedSeason: '18-19',
-      selectedLeague: 'premier-league',
+      selectedLeague: '',
       selectedTeam: '',
       selectedTeamObj: {},
       teamList: [],
-      leagueList: [
-        {
-          text: 'EPL',
-          value: 'premier-league'
-        },
-        {
-          text: 'La Liga',
-          value: 'liga'
-        },
-        {
-          text: 'Serie A',
-          value: 'serie-a'
-        },
-        {
-          text: 'Bundesliga',
-          value: 'bundesliga'
-        },
-        {
-          text: 'Ligue 1',
-          value: 'ligue1'
-        },
-        {
-          text: 'Eredivisie',
-          value: 'eredivisie'
-        }
-      ],
+      leagueList: [],
       seasonList: [
         {
           text: '17-18',
@@ -83,7 +59,7 @@ export default {
       ],
       fields: [
         {
-          value: 'round_no',
+          value: 'round',
           text: '라운드',
           width: '100px',
           align: 'center'
@@ -131,7 +107,7 @@ export default {
             res.data.forEach(team => {
               let tempTeam = {
                 text: team.name,
-                value: team.identifier
+                value: team.name
               }
               this.teamList.push(tempTeam)
             })
@@ -142,7 +118,25 @@ export default {
           console.log(err)
         })
     },
-
+    getLeagueList () {
+      this.$http.get(this.LEAGUE_URL)
+        .then(res => {
+          res.data.forEach(item => {
+            this.leagueList.push(
+              {
+                text: item.name,
+                value: item.league_id
+              }
+            )
+          })
+          this.selectedLeague = 'premier-league'
+          this.changeLeague()
+        })
+        .catch(err => {
+          console.log(err)
+          this.isLoading = false
+        })
+    },
     onSearch () {
       if (!this.selectedTeam) {
         this.isDialog = true
@@ -151,18 +145,17 @@ export default {
 
       this.matchList = []
       this.nextLeague = this.selectedLeague
-      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/rounds?team_identifier=${this.selectedTeam}`
+      let url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/matches/${this.selectedLeague}/${this.selectedSeason}/${this.selectedTeam}`
       this.isLoading = true
 
       this.$http.get(url)
         .then(res => {
-          if (res.data.data && res.data.data.statusCode === '200') {
-            res.data.data.rounds.forEach(round => {
+          if (res.data) {
+            res.data.forEach(round => {
               let tempDtm = new Date(round.date_match)
               let korDtm = new Date(tempDtm.setHours(tempDtm.getHours() + 9))
               let tempRound = {
                 ...round,
-                round_no: round.round_slug.split('-')[1],
                 match_dtm: korDtm.toISOString().replace('T', ' ').substr(5, 11)
               }
               this.matchList.push(tempRound)
@@ -211,7 +204,7 @@ export default {
   },
 
   created () {
-    this.changeLeague()
+    this.getLeagueList()
   }
 }
 </script>
