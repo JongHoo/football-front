@@ -123,7 +123,7 @@ export default {
     onSearch () {
       this.teamList = []
       this.nextLeague = this.selectedLeague
-      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/standings`
+      let url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/standings/${this.selectedLeague}/${this.selectedSeason}`
       if (!url) {
         return false
       }
@@ -131,15 +131,11 @@ export default {
 
       this.$http.get(url)
         .then((res) => {
-          if (res.data.data && res.data.data.statusCode === '200') {
-            let standings = res.data.data.standings
+          if (res.data) {
+            let standings = res.data
             standings.forEach((team) => {
-              let tempTeam = {
-                ...team,
-                ...team.overall
-              }
               this.isLoading = false
-              this.teamList.push(tempTeam)
+              this.teamList.push(team)
             })
           } else {
             this.isLoading = false
