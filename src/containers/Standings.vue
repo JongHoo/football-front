@@ -131,7 +131,7 @@ export default {
 
       this.$http.get(url)
         .then((res) => {
-          if (res.data) {
+          if (res.data && res.data.length > 0) {
             let standings = res.data
             standings.forEach((team) => {
               this.isLoading = false

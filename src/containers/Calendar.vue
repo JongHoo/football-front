@@ -150,7 +150,7 @@ export default {
 
       this.$http.get(url)
         .then(res => {
-          if (res.data) {
+          if (res.data && res.data.length > 0) {
             res.data.forEach(round => {
               let tempDtm = new Date(round.date_match)
               let korDtm = new Date(tempDtm.setHours(tempDtm.getHours() + 9))
