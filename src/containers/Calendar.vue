@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import commonApi from '../common/commonApi'
+
 export default {
   name: 'Calendar',
   data () {
@@ -96,11 +98,7 @@ export default {
   methods: {
     changeLeague () {
       this.teamList = []
-      const url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${this.selectedLeague}/${this.selectedSeason}`
-      if (!url) {
-        return false
-      }
-      this.$http.get(url)
+      commonApi.getTeams(this.selectedLeague, this.selectedSeason)
         .then((res) => {
           if (res && res.data) {
             this.teamList.push({text: '선택하세요', value: ''})
@@ -119,7 +117,7 @@ export default {
         })
     },
     getLeagueList () {
-      this.$http.get(this.LEAGUE_URL)
+      commonApi.getLeagues()
         .then(res => {
           res.data.forEach(item => {
             this.leagueList.push(
@@ -145,10 +143,9 @@ export default {
 
       this.matchList = []
       this.nextLeague = this.selectedLeague
-      let url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/matches/${this.selectedLeague}/${this.selectedSeason}/${this.selectedTeam}`
       this.isLoading = true
 
-      this.$http.get(url)
+      commonApi.getMatches(this.selectedLeague, this.selectedSeason, this.selectedTeam)
         .then(res => {
           if (res.data && res.data.length > 0) {
             res.data.forEach(round => {

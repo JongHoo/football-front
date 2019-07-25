@@ -27,11 +27,12 @@
 </template>
 
 <script>
+import commonApi from '../common/commonApi'
+
 export default {
   name: 'Standings',
   data () {
     return {
-      LEAGUE_URL: 'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues',
       pagination: {},
       isLoading: false,
       teamList: [],
@@ -123,13 +124,9 @@ export default {
     onSearch () {
       this.teamList = []
       this.nextLeague = this.selectedLeague
-      let url = `https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/standings/${this.selectedLeague}/${this.selectedSeason}`
-      if (!url) {
-        return false
-      }
       this.isLoading = true
 
-      this.$http.get(url)
+      commonApi.getStandings(this.selectedLeague, this.selectedSeason)
         .then((res) => {
           if (res.data && res.data.length > 0) {
             let standings = res.data
@@ -151,7 +148,7 @@ export default {
       return images(`./${league}.png`)
     },
     getLeagueList () {
-      this.$http.get(this.LEAGUE_URL)
+      commonApi.getLeagues()
         .then(res => {
           res.data.forEach(item => {
             this.leagueList.push(
