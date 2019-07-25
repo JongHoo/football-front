@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Dashboard from '@/containers/Dashboard'
 import Standings from '@/containers/Standings'
 import Calendar from '@/containers/Calendar'
+import Admin from '@/containers/Admin'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/calendar',
       name: 'Calendar',
       component: Calendar
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin
     }
   ]
 })
