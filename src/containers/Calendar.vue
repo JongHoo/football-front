@@ -38,7 +38,6 @@ export default {
   name: 'Calendar',
   data () {
     return {
-      LEAGUE_URL: 'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues',
       isLoading: false,
       isDialog: false,
       matchList: [],
