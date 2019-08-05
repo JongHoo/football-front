@@ -50,6 +50,10 @@ export default {
         {
           text: '18-19',
           value: '18-19'
+        },
+        {
+          text: '19-20',
+          value: '19-20'
         }
       ]
     }
