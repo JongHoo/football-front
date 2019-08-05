@@ -27,6 +27,14 @@
           v-spacer
           v-btn(color="red" flat="flat" @click="isDialog=false" v-bind:disabled="isLoading") CANCEL
           v-btn(color="green" flat="flat" @click="onSave()" v-bind:disabled="isLoading") OK
+  .text-xs-center
+    v-dialog(v-model="isError" width="300")
+      v-card
+        v-card-title(class="headline" primary-title) Error
+        v-card-text 서버 오류입니다.
+        v-card-actions
+          v-spacer
+          v-btn(color="green" flat="flat" @click="isError=false") OK
 </template>
 
 <script>
@@ -39,6 +47,7 @@ export default {
       saveCtgry: '',
       isDialog: false,
       isLoading: false,
+      isError: false,
       selectedSeason: '18-19',
       selectedLeague: '',
       leagueList: [],
@@ -98,6 +107,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
+          this.isError = true
           this.isLoading = false
         })
     },
@@ -110,6 +120,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
+          this.isError = true
           this.isLoading = false
         })
     },
@@ -122,6 +133,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
+          this.isError = true
           this.isLoading = false
         })
     }
