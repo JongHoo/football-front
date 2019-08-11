@@ -11,6 +11,11 @@
           span 일정
         v-btn(flat class="white--text" @click="() => movePage('admin')")
           span ADM
+      v-spacer
+      v-toolbar-items
+        span.user-info user id
+        v-btn(flat class="white--text" @click="() => logout()")
+          span Log out
     .router-wrapper
       router-view
     v-footer
@@ -29,6 +34,9 @@ export default {
   methods: {
     movePage (url) {
       this.$router.push(url)
+    },
+    logout () {
+      this.$router.push('login')
     }
   }
 }
@@ -39,7 +47,6 @@ export default {
     .v-toolbar__title {
       margin-right: 30px;
     }
-
     .router-wrapper {
       width: 100%;
       max-width: 1024px;
@@ -49,6 +56,12 @@ export default {
     }
     .v-card__actions {
       color: #ffffff;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      color: white;
+      margin-right: 20px;
     }
   }
 </style>

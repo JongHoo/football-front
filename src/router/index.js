@@ -4,6 +4,7 @@ import Dashboard from '@/containers/Dashboard'
 import Standings from '@/containers/Standings'
 import Calendar from '@/containers/Calendar'
 import Admin from '@/containers/Admin'
+import Login from '@/containers/Login'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/admin',
       name: 'Admin',
       component: Admin
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })

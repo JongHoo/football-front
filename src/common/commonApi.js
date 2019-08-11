@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'querystring'
 
 const urls = {
   // for User
@@ -23,6 +24,12 @@ const urls = {
   },
   updateMatches: (league, season) => {
     return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/matches/${league}/${season}`)
+  },
+  login: (loginId, loginPw) => {
+    return axios.post(
+      'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/login',
+      qs.stringify({loginId, loginPw})
+    )
   }
 }
 
