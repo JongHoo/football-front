@@ -3,29 +3,29 @@ import qs from 'querystring'
 
 const urls = {
   // for User
-  getLeagues: () => {
+  getLeagues () {
     return axios.get('https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues')
   },
-  getStandings: (league, season) => {
+  getStandings (league, season) {
     return axios.get(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/standings/${league}/${season}`)
   },
-  getTeams: (league, season) => {
+  getTeams (league, season) {
     return axios.get(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${league}/${season}`)
   },
-  getMatches: (league, season, team) => {
+  getMatches (league, season, team) {
     return axios.get(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/matches/${league}/${season}/${team}`)
   },
   // for Admin
-  updateTeams: (league, season) => {
+  updateTeams (league, season) {
     return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${league}/${season}`)
   },
-  updateStandings: (league, season) => {
+  updateStandings (league, season) {
     return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/standings/${league}/${season}`)
   },
-  updateMatches: (league, season) => {
+  updateMatches (league, season) {
     return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/matches/${league}/${season}`)
   },
-  login: (loginId, loginPw) => {
+  login (loginId, loginPw) {
     return axios.post(
       'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/login',
       qs.stringify({loginId, loginPw})

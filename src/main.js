@@ -4,6 +4,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
+import VueSession from 'vue-session'
 import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.css'
 
@@ -11,6 +12,7 @@ Vue.config.productionTip = false
 Vue.use(Vuetify, {
   iconfont: 'mdi'
 })
+Vue.use(VueSession)
 
 /* eslint-disable no-new */
 new Vue({
