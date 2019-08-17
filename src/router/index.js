@@ -8,8 +8,7 @@ import Login from '@/containers/Login'
 import Main from '@/containers/Main'
 
 Vue.use(Router)
-
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/login',
@@ -42,6 +41,24 @@ export default new Router({
           component: Admin
         }
       ]
+    },
+    {
+      path: '*',
+      redirect: '/login'
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !checkAuth()) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+const checkAuth = () => {
+  return Vue.prototype.$session.exists()
+}
+
+export default router

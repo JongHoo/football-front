@@ -36,7 +36,7 @@ export default {
       this.$router.push(url)
     },
     logout () {
-      this.$router.push('login')
+      this.$router.push({ name: 'Login' })
     }
   }
 }
