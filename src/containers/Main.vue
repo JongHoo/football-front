@@ -13,7 +13,7 @@
           span ADM
       v-spacer
       v-toolbar-items
-        span.user-info user id
+        span.user-info {{ session.user_nm }}
         v-btn(flat class="white--text" @click="() => logout()")
           span Log out
     .router-wrapper
@@ -28,7 +28,11 @@ export default {
   name: 'Main',
   data () {
     return {
-      userNm: 'User'
+    }
+  },
+  computed: {
+    session () {
+      return this.$session.get('jaySession')
     }
   },
   methods: {

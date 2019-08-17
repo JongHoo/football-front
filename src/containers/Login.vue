@@ -5,7 +5,7 @@
       span.title Login
     .form
       v-text-field(v-model="inputId" label="ID" :dark="true" :loading="isLoading")
-      v-text-field(v-model="inputPw" label="Password" :dark="true" type="password" :loading="isLoading")
+      v-text-field(v-model="inputPw" label="Password" :dark="true" type="password" :loading="isLoading" @keyup.enter="doLogin")
     .warning-text(v-if="loginError")
       span ID 및 비밀번호가 틀렸습니다.
     .center
@@ -32,7 +32,7 @@ export default {
         .then(res => {
           this.isLoading = false
           this.$session.start()
-          this.$session.set('jaySession', JSON.stringify(res.data))
+          this.$session.set('jaySession', res.data)
           this.$router.push('main/dashboard')
         })
         .catch(err => {
