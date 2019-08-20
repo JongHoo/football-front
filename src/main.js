@@ -5,6 +5,7 @@ import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
 import VueSession from 'vue-session'
+import VModal from 'vue-js-modal'
 import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.css'
 
@@ -13,6 +14,7 @@ Vue.use(Vuetify, {
   iconfont: 'mdi'
 })
 Vue.use(VueSession)
+Vue.use(VModal)
 
 /* eslint-disable no-new */
 new Vue({

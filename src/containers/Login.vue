@@ -67,12 +67,19 @@ export default {
 </script>
 
 <style lang="less">
-html {
-  background: url('../assets/images/champions.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+/*html {*/
+  /*background: url('../assets/images/champions.jpg') no-repeat center center fixed;*/
+  /*-webkit-background-size: cover;*/
+  /*-moz-background-size: cover;*/
+  /*-o-background-size: cover;*/
+  /*background-size: cover;*/
+/*}*/
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: #fc00aa;
+  background: linear-gradient(315deg,#fc00aa,#00dbde);
 }
 #login {
   & > .login-wrapper {
