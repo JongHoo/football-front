@@ -7,13 +7,14 @@
       v-text-field(v-model="inputId" label="ID" :dark="true" :loading="isLoading")
       v-text-field(v-model="inputPw" label="Password" :dark="true" type="password" :loading="isLoading" @keyup.enter="doLogin")
     .warning-text(v-if="loginError")
-      span ID 및 비밀번호가 틀렸습니다.
+      span {{ errMsg }}
     .center
       v-btn(@click="doLogin" :disabled="isLoading") LOGIN
 </template>
 
 <script>
 import commonApi from '../common/commonApi'
+import shaUtil from 'js-sha512'
 
 export default {
   name: 'Login',
@@ -22,13 +23,19 @@ export default {
       inputId: '',
       inputPw: '',
       isLoading: false,
-      loginError: false
+      loginError: false,
+      errMsg: ''
     }
   },
   methods: {
     doLogin () {
+      if (!this.checkIdValid(this.inputId)) {
+        this.errMsg = 'ID에는 특수문자 및 공백을 사용할 수 없습니다.'
+        this.loginError = true
+        return
+      }
       this.isLoading = true
-      commonApi.login(this.inputId, this.inputPw)
+      commonApi.login(this.inputId, shaUtil.sha512(this.inputPw))
         .then(res => {
           this.isLoading = false
           this.$session.start()
@@ -37,9 +44,20 @@ export default {
         })
         .catch(err => {
           this.isLoading = false
+          this.errMsg = 'ID혹은 비밀번호가 틀렸습니다.'
           this.loginError = true
           console.log(err)
         })
+    },
+    checkIdValid (input) {
+      const spacialChar = /[`~!@#$%^&*|\\'";:/?]/gi
+      if (input.search(/\s/) !== -1) {
+        return false
+      } else if (spacialChar.test(input)) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   mounted () {
