@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     movePage (url) {
-      this.$router.push(url)
+      this.$router.push(url).catch(() => {})
     },
     logout () {
       this.$router.push({ name: 'Login' })

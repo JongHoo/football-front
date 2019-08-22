@@ -67,14 +67,12 @@ export default {
 </script>
 
 <style lang="less">
-/*html {*/
+html {
   /*background: url('../assets/images/champions.jpg') no-repeat center center fixed;*/
   /*-webkit-background-size: cover;*/
   /*-moz-background-size: cover;*/
   /*-o-background-size: cover;*/
   /*background-size: cover;*/
-/*}*/
-body {
   margin: 0;
   width: 100%;
   min-height: 100vh;

@@ -52,9 +52,12 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.path !== '/login' && !checkAuth()) {
     next('/login')
-  } else {
-    next()
+    return
   }
+  if (to.path === from.path) {
+    return
+  }
+  next()
 })
 
 const checkAuth = () => {
