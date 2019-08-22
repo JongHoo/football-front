@@ -14,24 +14,25 @@
       hide-actions
       :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td(class="text-xs-center") {{ props.item.position }}
+        td.text-xs-center(v-bind:class="getUefaCtgry(nextLeague, props.item.position)") {{ props.item.position }}
         td {{ props.item.team }}
-        td(class="text-xs-center") {{ props.item.points }}
-        td(class="text-xs-center") {{ props.item.matches_played }}
-        td(class="text-xs-center") {{ props.item.wins }}
-        td(class="text-xs-center") {{ props.item.draws }}
-        td(class="text-xs-center") {{ props.item.losts }}
-        td(class="text-xs-center") {{ props.item.scores }}
-        td(class="text-xs-center") {{ props.item.conceded }}
-        td(class="text-xs-center") {{ props.item.goal_difference }}
+        td.text-xs-center {{ props.item.points }}
+        td.text-xs-center {{ props.item.matches_played }}
+        td.text-xs-center {{ props.item.wins }}
+        td.text-xs-center {{ props.item.draws }}
+        td.text-xs-center {{ props.item.losts }}
+        td.text-xs-center {{ props.item.scores }}
+        td.text-xs-center {{ props.item.conceded }}
+        td.text-xs-center {{ props.item.goal_difference }}
 </template>
 
 <script>
+import commonApi from '../common/commonApi'
+
 export default {
   name: 'Standings',
   data () {
     return {
-      LEAGUE_URL: 'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/leagues',
       pagination: {},
       isLoading: false,
       teamList: [],
@@ -103,7 +104,23 @@ export default {
         {
           text: '18-19',
           value: '18-19'
+        },
+        {
+          text: '19-20',
+          value: '19-20'
         }
+      ],
+      c4Leagues: [
+        'premier-league',
+        'liga',
+        'bundesliga',
+        'serie-a'
+      ],
+      c3Leagues: [
+        'ligue1'
+      ],
+      c2Leagues: [
+        'eredivisie'
       ]
     }
   },
@@ -111,23 +128,15 @@ export default {
     onSearch () {
       this.teamList = []
       this.nextLeague = this.selectedLeague
-      let url = `https://soccer.sportsopendata.net/v1/leagues/${this.selectedLeague}/seasons/${this.selectedSeason}/standings`
-      if (!url) {
-        return false
-      }
       this.isLoading = true
 
-      this.$http.get(url)
+      commonApi.getStandings(this.selectedLeague, this.selectedSeason)
         .then((res) => {
-          if (res.data.data && res.data.data.statusCode === '200') {
-            let standings = res.data.data.standings
+          if (res.data && res.data.length > 0) {
+            let standings = res.data
             standings.forEach((team) => {
-              let tempTeam = {
-                ...team,
-                ...team.overall
-              }
               this.isLoading = false
-              this.teamList.push(tempTeam)
+              this.teamList.push(team)
             })
           } else {
             this.isLoading = false
@@ -143,13 +152,13 @@ export default {
       return images(`./${league}.png`)
     },
     getLeagueList () {
-      this.$http.get(this.LEAGUE_URL)
+      commonApi.getLeagues()
         .then(res => {
           res.data.forEach(item => {
             this.leagueList.push(
               {
                 text: item.name,
-                value: item.short_name
+                value: item.league_id
               }
             )
           })
@@ -159,6 +168,23 @@ export default {
           console.log(err)
           this.isLoading = false
         })
+    },
+    getUefaCtgry (league, position) {
+      if (this.c4Leagues.includes(league)) {
+        if (position <= 4) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+      } else if (this.c3Leagues.includes(league)) {
+        if (position <= 3) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+      } else if (this.c2Leagues.includes(league)) {
+        if (position <= 2) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+      } else {
+        return 'NA'
+      }
     }
   },
   created () {
@@ -188,6 +214,11 @@ export default {
 
       .v-btn {
         position: relative;
+      }
+    }
+    & > .table-wrapper {
+      .CHAMPIONS_LEAGUE {
+        background-image: linear-gradient(to right, #53b5ff, #99c4ff, #c6d5ff, #e7e9ff, #ffffff);
       }
     }
   }

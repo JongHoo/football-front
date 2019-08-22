@@ -3,25 +3,65 @@ import Router from 'vue-router'
 import Dashboard from '@/containers/Dashboard'
 import Standings from '@/containers/Standings'
 import Calendar from '@/containers/Calendar'
+import Admin from '@/containers/Admin'
+import Login from '@/containers/Login'
+import Main from '@/containers/Main'
 
 Vue.use(Router)
-
-export default new Router({
+const router = new Router({
   routes: [
     {
-      path: '/',
-      name: 'Dashboard',
-      component: Dashboard
+      path: '/login',
+      name: 'Login',
+      component: Login
     },
     {
-      path: '/standings',
-      name: 'Standings',
-      component: Standings
+      path: '/main',
+      name: 'Main',
+      component: Main,
+      children: [
+        {
+          path: 'dashboard',
+          name: 'Dashboard',
+          component: Dashboard
+        },
+        {
+          path: 'standings',
+          name: 'Standings',
+          component: Standings
+        },
+        {
+          path: 'calendar',
+          name: 'Calendar',
+          component: Calendar
+        },
+        {
+          path: 'admin',
+          name: 'Admin',
+          component: Admin
+        }
+      ]
     },
     {
-      path: '/calendar',
-      name: 'Calendar',
-      component: Calendar
+      path: '*',
+      redirect: '/login'
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !checkAuth()) {
+    next('/login')
+    return
+  }
+  if (to.path === from.path) {
+    return
+  }
+  next()
+})
+
+const checkAuth = () => {
+  return Vue.prototype.$session.exists()
+}
+
+export default router
