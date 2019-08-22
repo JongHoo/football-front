@@ -10,16 +10,11 @@
               br
               br
               span.subheading.slide-text {{ slide.text }}
-  v-btn(color="red" flat="flat" @click="showModal") dddddddd
-  modal(name="update-data-modal" width="300" height="auto")
-    update-data-modal(@close="closeModal()")
 </template>
 
 <script>
-import UpdateDataModal from '@/modals/updateDataModal'
 export default {
   name: 'Dashboard',
-  components: {UpdateDataModal},
   data () {
     return {
       slides: [
@@ -40,12 +35,6 @@ export default {
     getslideImg (imgName) {
       let images = require.context('../assets/images/', false, /\.jpg$/)
       return images(`./${imgName}.jpg`)
-    },
-    showModal () {
-      this.$modal.show('update-data-modal')
-    },
-    closeModal () {
-      this.$modal.hide('update-data-modal')
     }
   }
 }

@@ -5,45 +5,40 @@
       v-card-title.headline 팀 목록 업데이트
       v-card-text 리그, 시즌별 팀 목록을 업데이트 합니다.
       v-card-actions
-        v-btn(@click="openUpdateDialog('TEAM')") Update
+        v-btn(@click="showUpdateModal('TEAM')") Update
     v-card.mx-auto(width="300")
       v-card-title.headline 팀 순위 업데이트
       v-card-text 리그, 시즌별 팀 순위를 업데이트 합니다.
       v-card-actions
-        v-btn(@click="openUpdateDialog('STANDING')") Update
+        v-btn(@click="showUpdateModal('STANDING')") Update
     v-card.mx-auto(width="300")
       v-card-title.headline 경기 일정 업데이트
       v-card-text 리그, 시즌별 경기 일정을 업데이트 합니다.
       v-card-actions
-        v-btn(@click="openUpdateDialog('MATCH')") Update
-  .text-xs-center
-    v-dialog(v-model="isDialog" width="400")
-      v-card
-        v-card-title(class="headline" primary-title) Select Options
-        v-card-text 리그 및 시즌을 입력하세요.
-        v-select(:items="leagueList" v-model="selectedLeague")
-        v-select(:items="seasonList" v-model="selectedSeason")
-        v-card-actions
-          v-spacer
-          v-btn(color="red" flat="flat" @click="isDialog=false" v-bind:disabled="isLoading") CANCEL
-          v-btn(color="green" flat="flat" @click="onSave()" v-bind:disabled="isLoading") OK
-  .text-xs-center
-    v-dialog(v-model="isError" width="300")
-      v-card
-        v-card-title(class="headline" primary-title) Error
-        v-card-text 서버 오류입니다.
-        v-card-actions
-          v-spacer
-          v-btn(color="green" flat="flat" @click="isError=false") OK
+        v-btn(@click="showUpdateModal('MATCH')") Update
+  modal(name="update-data-modal" width="300" height="auto")
+    update-data-modal(
+      title="Update"
+      :saveCtgry="saveCtgry"
+      :leagueList="leagueList"
+      @alertResult="showAlertModal"
+      @close="closeUpdateModal")
+  modal(name="alert-modal" width="300" height="auto")
+    alert-modal(:title="resultTitle" :content="resultContent" @close="closeAlertModal")
 </template>
 
 <script>
 import commonApi from '../common/commonApi'
+import AlertModal from '../modals/alertModal'
+import UpdateDataModal from '@/modals/updateDataModal'
 
 export default {
   name: 'Admin',
+  components: {UpdateDataModal, AlertModal},
   data () {
     return {
+      resultTitle: '',
+      resultContent: '',
       saveCtgry: '',
       isDialog: false,
       isLoading: false,
@@ -68,9 +63,9 @@ export default {
     }
   },
   methods: {
-    openUpdateDialog (ctgry) {
+    showUpdateModal (ctgry) {
       this.saveCtgry = ctgry
-      this.isDialog = true
+      this.$modal.show('update-data-modal')
     },
     getLeagueList () {
       commonApi.getLeagues()
@@ -89,53 +84,24 @@ export default {
           console.log(err)
         })
     },
-    onSave () {
-      if (this.saveCtgry === 'TEAM') {
-        this.requestUpdateTeams()
-      } else if (this.saveCtgry === 'STANDING') {
-        this.requestUpdateStandings()
-      } else if (this.saveCtgry === 'MATCH') {
-        this.requestUpdateMatches()
+    closeAlertModal () {
+      this.$modal.hide('alert-modal')
+    },
+    closeUpdateModal () {
+      this.$modal.hide('update-data-modal')
+    },
+    showAlertModal (result) {
+      if (result === 'S') {
+        this.resultTitle = '알림'
+        this.resultContent = '성공적으로 업데이트를 수행하였습니다.'
+        this.$modal.show('alert-modal')
+        return
       }
-    },
-    requestUpdateTeams () {
-      this.isLoading = true
-      commonApi.updateTeams(this.selectedLeague, this.selectedSeason)
-        .then((res) => {
-          this.isLoading = false
-          this.isDialog = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.isError = true
-          this.isLoading = false
-        })
-    },
-    requestUpdateStandings () {
-      this.isLoading = true
-      commonApi.updateStandings(this.selectedLeague, this.selectedSeason)
-        .then((res) => {
-          this.isLoading = false
-          this.isDialog = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.isError = true
-          this.isLoading = false
-        })
-    },
-    requestUpdateMatches () {
-      this.isLoading = true
-      commonApi.updateMatches(this.selectedLeague, this.selectedSeason)
-        .then((res) => {
-          this.isLoading = false
-          this.isDialog = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.isError = true
-          this.isLoading = false
-        })
+      if (result === 'F') {
+        this.resultTitle = '오류'
+        this.resultContent = '업데이트 수행중 오류가 발생하였습니다.'
+        this.$modal.show('alert-modal')
+      }
     }
   },
   created () {

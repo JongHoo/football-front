@@ -1,21 +1,32 @@
 <template lang="pug">
 #update-data-modal
+  .title
+    span {{ title }}
   v-select(:items="leagueList" v-model="selectedLeague")
   v-select(:items="seasonList" v-model="selectedSeason")
-  v-card-actions
-    v-spacer
-    v-btn(color="red" flat="flat" @click="onClose()") CANCEL
-    v-btn(color="green" flat="flat") OK
+  .btn-area
+    v-btn(color="#ef4656" @click="onClose()" :disabled="isLoading") CANCEL
+    v-btn(color="#76ef59" @click="onSave()" :disabled="isLoading") OK
 </template>
 
 <script>
+import commonApi from '../common/commonApi'
+
 export default {
   name: 'updateDataModal',
+  props: {
+    title: String,
+    saveCtgry: String,
+    leagueList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
-      selectedLeague: '',
+      isLoading: false,
+      selectedLeague: 'premier-league',
       selectedSeason: '19-20',
-      leagueList: [],
       seasonList: [
         {
           text: '17-18',
@@ -35,6 +46,60 @@ export default {
   methods: {
     onClose () {
       this.$emit('close')
+    },
+    onSave () {
+      if (this.saveCtgry === 'TEAM') {
+        this.requestUpdateTeams()
+      } else if (this.saveCtgry === 'STANDING') {
+        this.requestUpdateStandings()
+      } else if (this.saveCtgry === 'MATCH') {
+        this.requestUpdateMatches()
+      }
+    },
+    requestUpdateTeams () {
+      this.isLoading = true
+      commonApi.updateTeams(this.selectedLeague, this.selectedSeason)
+        .then((res) => {
+          this.isLoading = false
+          this.$emit('alertResult', 'S')
+          this.$emit('close')
+        })
+        .catch(err => {
+          console.log(err)
+          this.isLoading = false
+          this.$emit('alertResult', 'F')
+          this.$emit('close')
+        })
+    },
+    requestUpdateStandings () {
+      this.isLoading = true
+      commonApi.updateStandings(this.selectedLeague, this.selectedSeason)
+        .then((res) => {
+          this.isLoading = false
+          this.$emit('alertResult', 'S')
+          this.$emit('close')
+        })
+        .catch(err => {
+          console.log(err)
+          this.isLoading = false
+          this.$emit('alertResult', 'F')
+          this.$emit('close')
+        })
+    },
+    requestUpdateMatches () {
+      this.isLoading = true
+      commonApi.updateMatches(this.selectedLeague, this.selectedSeason)
+        .then((res) => {
+          this.isLoading = false
+          this.$emit('alertResult', 'S')
+          this.$emit('close')
+        })
+        .catch(err => {
+          console.log(err)
+          this.isLoading = false
+          this.$emit('alertResult', 'F')
+          this.$emit('close')
+        })
     }
   }
 }
@@ -43,5 +108,9 @@ export default {
 <style lang="less" scoped>
 #update-data-modal {
   padding: 20px;
+  & > .btn-area {
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 </style>
