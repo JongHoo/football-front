@@ -20,7 +20,10 @@ const urls = {
     return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/teams/${league}/${season}`)
   },
   updateStandings (league, season) {
-    return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/standings/${league}/${season}`)
+    return axios.post(
+      'https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/standings',
+      qs.stringify({league, season})
+    )
   },
   updateMatches (league, season) {
     return axios.post(`https://3y4mhvmwq3.execute-api.ap-northeast-2.amazonaws.com/dev/matches/${league}/${season}`)

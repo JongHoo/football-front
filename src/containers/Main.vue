@@ -9,8 +9,6 @@
           span 순위
         v-btn(flat class="white--text" @click="() => movePage('calendar')")
           span 일정
-        v-btn(flat class="white--text" @click="() => movePage('admin')")
-          span ADM
       v-spacer
       v-toolbar-items
         span.user-info {{ session.user_nm }}
