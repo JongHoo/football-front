@@ -29,6 +29,7 @@
 
 <script>
 import commonApi from '../common/commonApi'
+import commonData from '../common/commonData'
 import AlertModal from '../modals/alertModal'
 import UpdateDataModal from '@/modals/updateDataModal'
 
@@ -40,26 +41,12 @@ export default {
       resultTitle: '',
       resultContent: '',
       saveCtgry: '',
-      isDialog: false,
       isLoading: false,
       isError: false,
-      selectedSeason: '18-19',
+      selectedSeason: '19-20',
       selectedLeague: '',
       leagueList: [],
-      seasonList: [
-        {
-          text: '17-18',
-          value: '17-18'
-        },
-        {
-          text: '18-19',
-          value: '18-19'
-        },
-        {
-          text: '19-20',
-          value: '19-20'
-        }
-      ]
+      seasonList: commonData.seasonList()
     }
   },
   methods: {

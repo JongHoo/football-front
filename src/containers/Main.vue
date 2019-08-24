@@ -1,7 +1,7 @@
 <template lang="pug">
 #main
   v-app
-    v-toolbar(color="primary")
+    v-toolbar.main-toolbar
       v-toolbar-title(class="white--text")
         span(@click="() => movePage('dashboard')" :style="{ cursor: 'pointer'}") 해축해축
       v-toolbar-items
@@ -48,6 +48,14 @@ export default {
 
 <style lang="less">
 #main {
+  .v-toolbar {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  .main-toolbar {
+    background: #fc00aa;
+    background: linear-gradient(315deg,#fc00aa,#00dbde);
+  }
   .v-toolbar__title {
     margin-right: 30px;
   }

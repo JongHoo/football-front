@@ -21,47 +21,30 @@
           td(class="text-xs-center") {{ props.item.home_team }}
           td(class="text-xs-center") {{ props.item.match_result }}
           td(class="text-xs-center") {{ props.item.away_team }}
-  .text-xs-center
-    v-dialog(v-model="isDialog" width="300")
-      v-card
-        v-card-title(class="headline" primary-title) Error
-        v-card-text 팀을 선택하세요.
-        v-card-actions
-          v-spacer
-          v-btn(color="green" flat="flat" @click="isDialog=false") OK
+  modal(name="alert-modal" width="300" height="auto")
+    alert-modal(title="Error" content="팀을 선택하세요." @close="closeAlertModal")
 </template>
 
 <script>
 import commonApi from '../common/commonApi'
+import commonData from '../common/commonData'
+import AlertModal from '../modals/alertModal'
 
 export default {
   name: 'Calendar',
+  components: {AlertModal},
   data () {
     return {
       isLoading: false,
-      isDialog: false,
       matchList: [],
       nextLeague: 'premier-league',
-      selectedSeason: '18-19',
+      selectedSeason: '19-20',
       selectedLeague: '',
       selectedTeam: '',
       selectedTeamObj: {},
       teamList: [],
       leagueList: [],
-      seasonList: [
-        {
-          text: '17-18',
-          value: '17-18'
-        },
-        {
-          text: '18-19',
-          value: '18-19'
-        },
-        {
-          text: '19-20',
-          value: '19-20'
-        }
-      ],
+      seasonList: commonData.seasonList(),
       fields: [
         {
           value: 'round',
@@ -140,7 +123,7 @@ export default {
     },
     onSearch () {
       if (!this.selectedTeam) {
-        this.isDialog = true
+        this.$modal.show('alert-modal')
         return
       }
 
@@ -200,6 +183,9 @@ export default {
           return 'LOSE'
         }
       }
+    },
+    closeAlertModal () {
+      this.$modal.hide('alert-modal')
     }
   },
   created () {

@@ -76,7 +76,7 @@ html {
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  background: #fc00aa;
+  /*background: #fc00aa;*/
   background: linear-gradient(315deg,#fc00aa,#00dbde);
 }
 #login {

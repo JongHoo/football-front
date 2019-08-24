@@ -28,6 +28,7 @@
 
 <script>
 import commonApi from '../common/commonApi'
+import commonData from '../common/commonData'
 
 export default {
   name: 'Standings',
@@ -37,7 +38,7 @@ export default {
       isLoading: false,
       teamList: [],
       nextLeague: 'premier-league',
-      selectedSeason: '18-19',
+      selectedSeason: '19-20',
       selectedLeague: 'premier-league',
       leagueLogo: `../assets/logos/${this.selectedLeague}.png`,
       fields: [
@@ -96,20 +97,7 @@ export default {
         }
       ],
       leagueList: [],
-      seasonList: [
-        {
-          text: '17-18',
-          value: '17-18'
-        },
-        {
-          text: '18-19',
-          value: '18-19'
-        },
-        {
-          text: '19-20',
-          value: '19-20'
-        }
-      ],
+      seasonList: commonData.seasonList(),
       c4Leagues: [
         'premier-league',
         'liga',
