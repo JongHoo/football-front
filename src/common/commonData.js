@@ -13,6 +13,14 @@ const commData = {
       })
     }
     return seasonList
+  },
+  currentSeason () {
+    let currentYear = Number((new Date()).toISOString().substr(2, 2))
+    let currentMonth = Number((new Date()).toISOString().substr(5, 2))
+    if (currentMonth < 8) {
+      currentYear -= 1
+    }
+    return `${currentYear}-${currentYear + 1}`
   }
 }
 
