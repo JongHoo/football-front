@@ -32,7 +32,7 @@ import AlertModal from '../modals/alertModal'
 
 export default {
   name: 'Calendar',
-  components: {AlertModal},
+  components: { AlertModal },
   data () {
     return {
       isLoading: false,
