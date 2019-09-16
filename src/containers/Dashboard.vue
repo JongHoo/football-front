@@ -1,29 +1,24 @@
 <template lang="pug">
 #dashboard
-  <!--v-carousel(height="100%" hide-delimiters hide-controls)-->
-    <!--v-carousel-item(v-for="(slide, i) in slides" :key="i")-->
-      <!--v-img.slide-img(:src="getslideImg(slide.img)" height="200")-->
-        <!--v-container(fill-height)-->
-          <!--v-layout(align-center)-->
-            <!--v-flex-->
-              <!--span.display-1.slide-title {{ slide.title }}-->
-              <!--br-->
-              <!--br-->
-              <!--span.subheading.slide-text {{ slide.text }}-->
   .title-wrapper
     span.main-title Standings {{ currentSeason }}
     hr
   .content-wrapper
-    .stading-grid(v-for="key in Object.keys(topStandings)")
-      v-data-table(
-        :headers="fields"
-        :items="topStandings[key]"
-        no-data-text="No Data"
-        :paging="false")
-        template(slot="items" slot-scope="props")
-          td.text-xs-center {{ props.item.position }}
-          td {{ props.item.team }}
-          td.text-xs-center {{ props.item.points }}
+    .standing-wrapper(v-for="league in leagueList")
+      .legue-logo-wrapper
+        img(:src="getLeagueLogo(league)" height="30px")
+      .stading-grid
+        table
+          thead
+            tr
+              th.text-xs-center(style="width: 50px; border-bottom: solid 1px black;") 순위
+              th.text-xs-center(style="width: auto; border-bottom: solid 1px black;") 팀
+              th.text-xs-center(style="width: 50px; border-bottom: solid 1px black;") 승점
+          tbody
+            tr(v-for="item in topStandings[league]")
+              td.text-xs-center {{ item.position }}
+              td.text-xs-center {{ item.team }}
+              td.text-xs-center {{ item.points }}
   modal(name="alert-modal" width="300" height="auto")
     alert-modal(title="Error" content="서버 오류입니다." @close="closeAlertModal")
 </template>
@@ -39,39 +34,15 @@ export default {
   data () {
     return {
       currentSeason: commonData.currentSeason(),
-      topStandings: {},
-      slides: [
-        {
-          title: '해외 축구 실시간 순위',
-          text: '매일 업데이트 되는 각국 리그의 순위를 확인하세요.',
-          img: 'field'
-        },
-        {
-          title: '팀별 일정',
-          text: '좋아하는 팀들의 일정과 결과를 체크하세요.',
-          img: 'oldman'
-        }
+      leagueList: [
+        'premier-league',
+        'liga',
+        'serie-a',
+        'bundesliga',
+        'ligue1',
+        'eredivisie'
       ],
-      fields: [
-        {
-          value: 'position',
-          text: '순위',
-          align: 'center',
-          width: '100px',
-          fixed: true
-        },
-        {
-          value: 'team',
-          text: '팀',
-          width: '100px',
-          fixed: true
-        },
-        {
-          value: 'points',
-          text: '승점',
-          align: 'center'
-        }
-      ]
+      topStandings: {}
     }
   },
   methods: {
@@ -90,6 +61,10 @@ export default {
     },
     closeAlertModal () {
       this.$modal.hide('alert-modal')
+    },
+    getLeagueLogo (league) {
+      let images = require.context('../assets/logos/', false, /\.png$/)
+      return images(`./${league}.png`)
     }
   },
   mounted () {
@@ -125,10 +100,16 @@ export default {
     }
   }
   .content-wrapper {
-    & > .stading-grid {
+    & > .standing-wrapper {
       width: 30%;
       float: left;
-      margin-left: 10px;
+      margin: 10px;
+      & > .stading-grid {
+        & > table {
+          width: 250px;
+          height: 120px;
+        }
+      }
     }
   }
 }
