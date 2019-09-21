@@ -6,7 +6,7 @@
   .content-wrapper
     v-content
       v-layout(row wrap)
-        v-flex(v-for="league in leagueList" xs12 sm6 md4)
+        v-flex(v-for="league in leagueList" :key="league" xs12 sm6 md4)
           .standing-wrapper.pa-2
             .legue-logo-wrapper
               img(:src="getLeagueLogo(league)" height="30px")
@@ -18,7 +18,7 @@
                     th.text-xs-center(style="width: auto;") 팀
                     th.text-xs-center(style="width: 50px;") 승점
                 tbody
-                  tr(v-for="item in topStandings[league]")
+                  tr(v-for="item in topStandings[league]" :key="item.team")
                     td.text-xs-center {{ item.position }}
                     td.text-xs-center {{ item.team }}
                     td.text-xs-center {{ item.points }}

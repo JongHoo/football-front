@@ -7,12 +7,7 @@
   .legue-logo-wrapper
     img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
-    v-data-table(
-      :headers="fields"
-      :items="teamList"
-      no-data-text="No Data"
-      hide-actions
-      :loading="isLoading")
+    v-data-table(:headers="fields" :items="teamList" no-data-text="No Data" hide-actions :loading="isLoading")
       template(slot="items" slot-scope="props")
         td.text-xs-center(v-bind:class="getUefaCtgry(nextLeague, props.item.position)") {{ props.item.position }}
         td {{ props.item.team }}
@@ -34,6 +29,8 @@ export default {
   name: 'Standings',
   data () {
     return {
+      leagueList: commonData.leagueList(),
+      seasonList: commonData.seasonList(),
       pagination: {},
       isLoading: false,
       teamList: [],
@@ -96,8 +93,6 @@ export default {
           align: 'center'
         }
       ],
-      leagueList: [],
-      seasonList: commonData.seasonList(),
       c4Leagues: [
         'premier-league',
         'liga',
@@ -139,24 +134,6 @@ export default {
       let images = require.context('../assets/logos/', false, /\.png$/)
       return images(`./${league}.png`)
     },
-    getLeagueList () {
-      commonApi.getLeagues()
-        .then(res => {
-          res.data.forEach(item => {
-            this.leagueList.push(
-              {
-                text: item.name,
-                value: item.league_id
-              }
-            )
-          })
-          this.selectedLeague = 'premier-league'
-        })
-        .catch(err => {
-          console.log(err)
-          this.isLoading = false
-        })
-    },
     getUefaCtgry (league, position) {
       if (this.c4Leagues.includes(league)) {
         if (position <= 4) {
@@ -174,9 +151,6 @@ export default {
         return 'NA'
       }
     }
-  },
-  created () {
-    this.getLeagueList()
   }
 }
 </script>
