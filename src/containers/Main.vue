@@ -11,7 +11,7 @@
           span 일정
       v-spacer
       v-toolbar-items
-        span.user-info {{ session.user_nm }}
+        span.user-info.hidden-sm-and-down {{ session.user_nm }}
         v-btn(flat class="white--text" @click="() => logout()")
           span Log out
     .router-wrapper

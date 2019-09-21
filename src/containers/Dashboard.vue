@@ -4,21 +4,24 @@
     span.main-title Standings {{ currentSeason }}
     hr
   .content-wrapper
-    .standing-wrapper(v-for="league in leagueList")
-      .legue-logo-wrapper
-        img(:src="getLeagueLogo(league)" height="30px")
-      .stading-grid
-        table
-          thead
-            tr
-              th.text-xs-center(style="width: 50px; border-bottom: solid 1px black;") 순위
-              th.text-xs-center(style="width: auto; border-bottom: solid 1px black;") 팀
-              th.text-xs-center(style="width: 50px; border-bottom: solid 1px black;") 승점
-          tbody
-            tr(v-for="item in topStandings[league]")
-              td.text-xs-center {{ item.position }}
-              td.text-xs-center {{ item.team }}
-              td.text-xs-center {{ item.points }}
+    v-content
+      v-layout(row wrap)
+        v-flex(v-for="league in leagueList" xs12 sm6 md4)
+          .standing-wrapper.pa-2
+            .legue-logo-wrapper
+              img(:src="getLeagueLogo(league)" height="30px")
+            .stading-grid
+              table
+                thead
+                  tr
+                    th.text-xs-center(style="width: 50px;") 순위
+                    th.text-xs-center(style="width: auto;") 팀
+                    th.text-xs-center(style="width: 50px;") 승점
+                tbody
+                  tr(v-for="item in topStandings[league]")
+                    td.text-xs-center {{ item.position }}
+                    td.text-xs-center {{ item.team }}
+                    td.text-xs-center {{ item.points }}
   modal(name="alert-modal" width="300" height="auto")
     alert-modal(title="Error" content="서버 오류입니다." @close="closeAlertModal")
 </template>
@@ -46,10 +49,6 @@ export default {
     }
   },
   methods: {
-    getslideImg (imgName) {
-      let images = require.context('../assets/images/', false, /\.jpg$/)
-      return images(`./${imgName}.jpg`)
-    },
     async getTopStandings () {
       try {
         const topStandingRawData = await commonApi.getTopStandings(this.currentSeason)
@@ -75,16 +74,6 @@ export default {
 
 <style lang="less">
 #dashboard {
-  & > .v-carousel {
-    border-radius: 15px;
-  }
-  & .slide-img {
-    border-radius: 15px;
-    & span {
-      margin-left: 10px;
-      color: #ffffff;
-    }
-  }
   .title-wrapper {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -100,14 +89,19 @@ export default {
     }
   }
   .content-wrapper {
-    & > .standing-wrapper {
-      width: 30%;
-      float: left;
+    .standing-wrapper {
       margin: 10px;
       & > .stading-grid {
         & > table {
           width: 250px;
-          height: 120px;
+          min-height: 120px;
+          border-spacing: 0px;
+          & > thead {
+            background-color: aquamarine;
+            th {
+              border-bottom: solid 1px #379641;
+            }
+          }
         }
       }
     }
