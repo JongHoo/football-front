@@ -25,28 +25,28 @@ const commData = {
   leagueList () {
     const leagueList = [
       {
-        value: 'bundesliga',
-        text: 'Bundesliga'
-      },
-      {
         value: 'premier-league',
         text: 'EPL'
-      },
-      {
-        value: 'eredivisie',
-        text: 'Eredivisie'
       },
       {
         value: 'liga',
         text: 'La Liga'
       },
       {
+        value: 'serie-a',
+        text: 'Serie A'
+      },
+      {
+        value: 'bundesliga',
+        text: 'Bundesliga'
+      },
+      {
         value: 'ligue1',
         text: 'Ligue 1'
       },
       {
-        value: 'serie-a',
-        text: 'Serie A'
+        value: 'eredivisie',
+        text: 'Eredivisie'
       }
     ]
     return leagueList

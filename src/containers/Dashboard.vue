@@ -6,10 +6,10 @@
   .content-wrapper
     v-content
       v-layout(row wrap)
-        v-flex(v-for="league in leagueList" :key="league" xs12 sm6 md4)
+        v-flex(v-for="league in leagueList" :key="league.value" xs12 sm6 md4)
           .standing-wrapper.pa-2
             .legue-logo-wrapper
-              img(:src="getLeagueLogo(league)" height="30px")
+              img(:src="getLeagueLogo(league.value)" height="30px")
             .stading-grid
               table
                 thead
@@ -18,7 +18,7 @@
                     th.text-xs-center(style="width: auto;") 팀
                     th.text-xs-center(style="width: 50px;") 승점
                 tbody
-                  tr(v-for="item in topStandings[league]" :key="item.team")
+                  tr(v-for="item in topStandings[league.value]" :key="item.team")
                     td.text-xs-center {{ item.position }}
                     td.text-xs-center {{ item.team }}
                     td.text-xs-center {{ item.points }}
@@ -37,14 +37,7 @@ export default {
   data () {
     return {
       currentSeason: commonData.currentSeason(),
-      leagueList: [
-        'premier-league',
-        'liga',
-        'serie-a',
-        'bundesliga',
-        'ligue1',
-        'eredivisie'
-      ],
+      leagueList: commonData.leagueList(),
       topStandings: {}
     }
   },
