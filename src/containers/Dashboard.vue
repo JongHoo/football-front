@@ -95,6 +95,9 @@ export default {
               border-bottom: solid 1px #379641;
             }
           }
+          & > tbody {
+            background: white;
+          }
         }
       }
     }
