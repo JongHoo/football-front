@@ -9,7 +9,7 @@
   .table-wrapper
     v-data-table(:headers="fields" :items="teamList" no-data-text="No Data" hide-actions :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td.text-xs-center(v-bind:class="getUefaCtgry(nextLeague, props.item.position)") {{ props.item.position }}
+        td.text-xs-center(:class="getUefaCtgry(nextLeague, props.item.position)") {{ props.item.position }}
         td {{ props.item.team }}
         td.text-xs-center {{ props.item.points }}
         td.text-xs-center {{ props.item.matches_played }}

@@ -10,11 +10,10 @@
   .table-wrapper
     v-data-table(:headers="fields" :items="matchList" no-data-text="No Data" hide-actions :loading="isLoading")
       template(slot="items" slot-scope="props")
-        tr(v-bind:class="getResultColor(props.item)")
-          td(class="text-xs-center") {{ props.item.round }}
-          td(class="text-xs-center") {{ props.item.match_dtm }}
-          td(class="text-xs-center") {{ props.item.counter_team }}
-          td(class="text-xs-center") {{ props.item.match_result }}
+        td.text-xs-center {{ props.item.round }}
+        td.text-xs-center {{ props.item.match_dtm }}
+        td.text-xs-center {{ props.item.counter_team }}
+        td.text-xs-center(:class="getResultColor(props.item)") {{ props.item.match_result }}
   modal(name="alert-modal" width="300" height="auto")
     alert-modal(title="Error" content="팀을 선택하세요." @close="closeAlertModal")
 </template>
