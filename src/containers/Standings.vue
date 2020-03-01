@@ -7,14 +7,9 @@
   .legue-logo-wrapper
     img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
-    v-data-table(
-      :headers="fields"
-      :items="teamList"
-      no-data-text="No Data"
-      hide-actions
-      :loading="isLoading")
+    v-data-table(:headers="fields" :items="teamList" no-data-text="No Data" hide-actions :loading="isLoading")
       template(slot="items" slot-scope="props")
-        td.text-xs-center(v-bind:class="getUefaCtgry(nextLeague, props.item.position)") {{ props.item.position }}
+        td.text-xs-center(:class="getTeamCtgry(nextLeague, props.item.position)") {{ props.item.position }}
         td {{ props.item.team }}
         td.text-xs-center {{ props.item.points }}
         td.text-xs-center {{ props.item.matches_played }}
@@ -28,16 +23,19 @@
 
 <script>
 import commonApi from '../common/commonApi'
+import commonData from '../common/commonData'
 
 export default {
   name: 'Standings',
   data () {
     return {
+      leagueList: commonData.leagueList(),
+      seasonList: commonData.seasonList(),
       pagination: {},
       isLoading: false,
       teamList: [],
       nextLeague: 'premier-league',
-      selectedSeason: '18-19',
+      selectedSeason: '19-20',
       selectedLeague: 'premier-league',
       leagueLogo: `../assets/logos/${this.selectedLeague}.png`,
       fields: [
@@ -94,33 +92,6 @@ export default {
           text: '득실',
           align: 'center'
         }
-      ],
-      leagueList: [],
-      seasonList: [
-        {
-          text: '17-18',
-          value: '17-18'
-        },
-        {
-          text: '18-19',
-          value: '18-19'
-        },
-        {
-          text: '19-20',
-          value: '19-20'
-        }
-      ],
-      c4Leagues: [
-        'premier-league',
-        'liga',
-        'bundesliga',
-        'serie-a'
-      ],
-      c3Leagues: [
-        'ligue1'
-      ],
-      c2Leagues: [
-        'eredivisie'
       ]
     }
   },
@@ -151,44 +122,43 @@ export default {
       let images = require.context('../assets/logos/', false, /\.png$/)
       return images(`./${league}.png`)
     },
-    getLeagueList () {
-      commonApi.getLeagues()
-        .then(res => {
-          res.data.forEach(item => {
-            this.leagueList.push(
-              {
-                text: item.name,
-                value: item.league_id
-              }
-            )
-          })
-          this.selectedLeague = 'premier-league'
-        })
-        .catch(err => {
-          console.log(err)
-          this.isLoading = false
-        })
-    },
-    getUefaCtgry (league, position) {
-      if (this.c4Leagues.includes(league)) {
+    getTeamCtgry (league, position) {
+      if (['premier-league', 'serie-a', 'liga'].includes(league)) {
         if (position <= 4) {
           return 'CHAMPIONS_LEAGUE'
         }
-      } else if (this.c3Leagues.includes(league)) {
+        if (position >= 18) {
+          return 'DEMOTE'
+        }
+      } else if (league === 'bundesliga') {
+        if (position <= 4) {
+          return 'CHAMPIONS_LEAGUE'
+        }
+        if (position >= 17) {
+          return 'DEMOTE'
+        }
+        if (position === 16) {
+          return 'DEMOTE_PLAYOFF'
+        }
+      } else if (league === 'ligue1') {
         if (position <= 3) {
           return 'CHAMPIONS_LEAGUE'
         }
-      } else if (this.c2Leagues.includes(league)) {
+        if (position >= 18) {
+          return 'DEMOTE'
+        }
+      } else if (league === 'eredivisie') {
         if (position <= 2) {
           return 'CHAMPIONS_LEAGUE'
         }
-      } else {
-        return 'NA'
+        if (position === 18) {
+          return 'DEMOTE'
+        }
+        if (position === 16 || position === 17) {
+          return 'DEMOTE_PLAYOFF'
+        }
       }
     }
-  },
-  created () {
-    this.getLeagueList()
   }
 }
 </script>
@@ -219,6 +189,12 @@ export default {
     & > .table-wrapper {
       .CHAMPIONS_LEAGUE {
         background-image: linear-gradient(to right, #53b5ff, #99c4ff, #c6d5ff, #e7e9ff, #ffffff);
+      }
+      .DEMOTE {
+        background-image: linear-gradient(to right, #6c6c6c, #8f8f8f, #b3b3b3, #d8d8d8, #ffffff);
+      }
+      .DEMOTE_PLAYOFF {
+        background-image: linear-gradient(to right, #aeaeae, #c2c2c2, #d6d6d6, #eaeaea, #ffffff);
       }
     }
   }

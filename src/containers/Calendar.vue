@@ -8,60 +8,36 @@
   .legue-logo-wrapper
     img(:src="getLeagueLogo(nextLeague)" height="50px")
   .table-wrapper
-    v-data-table(
-    :headers="fields"
-    :items="matchList"
-    no-data-text="No Data"
-    hide-actions
-    :loading="isLoading")
+    v-data-table(:headers="fields" :items="matchList" no-data-text="No Data" hide-actions :loading="isLoading")
       template(slot="items" slot-scope="props")
-        tr(v-bind:class="getResultColor(props.item)")
-          td(class="text-xs-center") {{ props.item.round }}
-          td(class="text-xs-center") {{ props.item.match_dtm }}
-          td(class="text-xs-center") {{ props.item.home_team }}
-          td(class="text-xs-center") {{ props.item.match_result }}
-          td(class="text-xs-center") {{ props.item.away_team }}
-  .text-xs-center
-    v-dialog(v-model="isDialog" width="300")
-      v-card
-        v-card-title(class="headline" primary-title) Error
-        v-card-text 팀을 선택하세요.
-        v-card-actions
-          v-spacer
-          v-btn(color="green" flat="flat" @click="isDialog=false") OK
+        td.text-xs-center {{ props.item.round }}
+        td.text-xs-center {{ props.item.match_dtm }}
+        td.text-xs-center {{ props.item.counter_team }}
+        td.text-xs-center(:class="getResultColor(props.item)") {{ props.item.match_result }}
+  modal(name="alert-modal" width="300" height="auto")
+    alert-modal(title="Error" content="팀을 선택하세요." @close="closeAlertModal")
 </template>
 
 <script>
 import commonApi from '../common/commonApi'
+import commonData from '../common/commonData'
+import AlertModal from '../modals/alertModal'
 
 export default {
   name: 'Calendar',
+  components: { AlertModal },
   data () {
     return {
+      leagueList: commonData.leagueList(),
+      seasonList: commonData.seasonList(),
       isLoading: false,
-      isDialog: false,
       matchList: [],
       nextLeague: 'premier-league',
-      selectedSeason: '18-19',
-      selectedLeague: '',
+      selectedSeason: '19-20',
+      selectedLeague: 'premier-league',
       selectedTeam: '',
       selectedTeamObj: {},
       teamList: [],
-      leagueList: [],
-      seasonList: [
-        {
-          text: '17-18',
-          value: '17-18'
-        },
-        {
-          text: '18-19',
-          value: '18-19'
-        },
-        {
-          text: '19-20',
-          value: '19-20'
-        }
-      ],
       fields: [
         {
           value: 'round',
@@ -77,8 +53,8 @@ export default {
           sortable: false
         },
         {
-          value: 'home_team',
-          text: '홈팀',
+          value: 'counter_team',
+          text: '상대팀',
           sortable: false,
           align: 'center'
         },
@@ -88,22 +64,17 @@ export default {
           width: '100px',
           align: 'center',
           sortable: false
-        },
-        {
-          value: 'away_team',
-          text: '원정팀',
-          align: 'center',
-          sortable: false
         }
       ]
     }
   },
   methods: {
     changeLeague () {
-      this.teamList = []
+      this.teamList = [{text: 'loading...', value: ''}]
       commonApi.getTeams(this.selectedLeague, this.selectedSeason)
         .then((res) => {
           if (res && res.data) {
+            this.teamList = []
             this.teamList.push({text: '선택하세요', value: ''})
             res.data.forEach(team => {
               let tempTeam = {
@@ -119,28 +90,9 @@ export default {
           console.log(err)
         })
     },
-    getLeagueList () {
-      commonApi.getLeagues()
-        .then(res => {
-          res.data.forEach(item => {
-            this.leagueList.push(
-              {
-                text: item.name,
-                value: item.league_id
-              }
-            )
-          })
-          this.selectedLeague = 'premier-league'
-          this.changeLeague()
-        })
-        .catch(err => {
-          console.log(err)
-          this.isLoading = false
-        })
-    },
     onSearch () {
       if (!this.selectedTeam) {
-        this.isDialog = true
+        this.$modal.show('alert-modal')
         return
       }
 
@@ -150,17 +102,20 @@ export default {
 
       commonApi.getMatches(this.selectedLeague, this.selectedSeason, this.selectedTeam)
         .then(res => {
+          this.changeSelectedTeamObj()
           if (res.data && res.data.length > 0) {
             res.data.forEach(round => {
               let tempDtm = new Date(round.date_match)
               let korDtm = new Date(tempDtm.setHours(tempDtm.getHours() + 9))
+              let counterTeam = round.home_team === this.selectedTeamObj.text ? round.away_team : round.home_team
+              let homeAway = round.home_team === this.selectedTeamObj.text ? 'home' : 'away'
               let tempRound = {
                 ...round,
-                match_dtm: korDtm.toISOString().replace('T', ' ').substr(5, 11)
+                match_dtm: korDtm.toISOString().replace('T', ' ').substr(5, 11),
+                counter_team: `${counterTeam} (${homeAway})`
               }
               this.matchList.push(tempRound)
             })
-            this.changeSelectedTeamObj()
             this.isLoading = false
           } else {
             this.isLoading = false
@@ -200,10 +155,13 @@ export default {
           return 'LOSE'
         }
       }
+    },
+    closeAlertModal () {
+      this.$modal.hide('alert-modal')
     }
   },
   created () {
-    this.getLeagueList()
+    this.changeLeague()
   }
 }
 </script>

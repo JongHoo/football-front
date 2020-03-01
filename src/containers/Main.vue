@@ -1,7 +1,7 @@
 <template lang="pug">
 #main
   v-app
-    v-toolbar(color="primary")
+    v-toolbar.main-toolbar
       v-toolbar-title(class="white--text")
         span(@click="() => movePage('dashboard')" :style="{ cursor: 'pointer'}") 해축해축
       v-toolbar-items
@@ -9,11 +9,9 @@
           span 순위
         v-btn(flat class="white--text" @click="() => movePage('calendar')")
           span 일정
-        v-btn(flat class="white--text" @click="() => movePage('admin')")
-          span ADM
       v-spacer
       v-toolbar-items
-        span.user-info {{ session.user_nm }}
+        span.user-info.hidden-sm-and-down {{ session.user_nm }}
         v-btn(flat class="white--text" @click="() => logout()")
           span Log out
     .router-wrapper
@@ -48,6 +46,14 @@ export default {
 
 <style lang="less">
 #main {
+  .v-toolbar {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  .main-toolbar {
+    background: #fc00aa;
+    background: linear-gradient(315deg,#fc00aa,#00dbde);
+  }
   .v-toolbar__title {
     margin-right: 30px;
   }
