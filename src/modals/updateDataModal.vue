@@ -59,7 +59,7 @@ export default {
     requestUpdateTeams () {
       this.isLoading = true
       commonApi.updateTeams(this.selectedLeague, this.selectedSeason)
-        .then((res) => {
+        .then(() => {
           this.isLoading = false
           this.$emit('alertResult', 'S')
           this.$emit('close')
@@ -74,7 +74,7 @@ export default {
     requestUpdateStandings () {
       this.isLoading = true
       commonApi.updateStandings(this.selectedLeague, this.selectedSeason)
-        .then((res) => {
+        .then(() => {
           this.isLoading = false
           this.$emit('alertResult', 'S')
           this.$emit('close')
@@ -89,7 +89,7 @@ export default {
     requestUpdateMatches () {
       this.isLoading = true
       commonApi.updateMatches(this.selectedLeague, this.selectedSeason)
-        .then((res) => {
+        .then(() => {
           this.isLoading = false
           this.$emit('alertResult', 'S')
           this.$emit('close')

@@ -14,10 +14,7 @@ Vue.use(Vuetify, {
 Vue.use(VueSession)
 Vue.use(VModal)
 
-/* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
-})
+  render: h => h(App),
+  router
+}).$mount('#app')
