@@ -10,21 +10,37 @@
       span {{ errMsg }}
     .center
       v-btn(@click="doLogin" :disabled="isLoading") LOGIN
+  .oauth-wrapper
+    GoogleLogin(:params="gLoginObj.params" :renderParams="gLoginObj.renderParams" :onSuccess="onSuccess" :onFailure="onFailure")
 </template>
 
 <script>
-import commonApi from '../common/commonApi'
 import shaUtil from 'js-sha512'
+import GoogleLogin from 'vue-google-login'
+import commonApi from '../common/commonApi'
 
 export default {
   name: 'Login',
+  components: {
+    GoogleLogin
+  },
   data () {
     return {
       inputId: '',
       inputPw: '',
       isLoading: false,
       loginError: false,
-      errMsg: ''
+      errMsg: '',
+      gLoginObj: {
+        params: {
+          client_id: '622739436472-13n9cnt43m6km0877cegh25m5affr5e0.apps.googleusercontent.com'
+        },
+        renderParams: {
+          width: 300,
+          height: 50,
+          longtitle: true
+        }
+      }
     }
   },
   methods: {
@@ -58,6 +74,21 @@ export default {
       } else {
         return true
       }
+    },
+    onSuccess (userData) {
+      this.$session.start()
+      this.$session.set('jaySession', this.makeUserData(userData.getBasicProfile()))
+      this.$router.push('main/dashboard')
+    },
+    onFailure () {
+      this.errMsg = 'Google 로그인에 실패하였습니다.'
+      this.loginError = true
+    },
+    makeUserData (googleUserData) {
+      return {
+        login_id: googleUserData.Au,
+        user_nm: googleUserData.JW
+      }
     }
   },
   mounted () {
@@ -68,15 +99,9 @@ export default {
 
 <style lang="less">
 html {
-  /*background: url('../assets/images/champions.jpg') no-repeat center center fixed;*/
-  /*-webkit-background-size: cover;*/
-  /*-moz-background-size: cover;*/
-  /*-o-background-size: cover;*/
-  /*background-size: cover;*/
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  /*background: #fc00aa;*/
   background: linear-gradient(315deg,#fc00aa,#00dbde);
 }
 #login {
@@ -97,6 +122,10 @@ html {
     & > .warning-text {
       font-size: 11px;
     }
+  }
+  & > .oauth-wrapper {
+    margin: 20px auto auto auto;
+    width: 300px;
   }
 }
 </style>
