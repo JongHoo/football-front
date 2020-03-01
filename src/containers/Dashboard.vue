@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { groupBy } from 'lodash'
 import commonApi from '../common/commonApi'
 import commonData from '../common/commonData'
 import AlertModal from '../modals/alertModal'
@@ -45,8 +46,7 @@ export default {
     async getTopStandings () {
       try {
         const topStandingRawData = await commonApi.getTopStandings(this.currentSeason)
-        this.topStandings = this._.groupBy(topStandingRawData.data, 'league_id')
-        console.log(this.topStandings)
+        this.topStandings = groupBy(topStandingRawData.data, 'league_id')
       } catch (err) {
         this.$modal.show('alert-modal')
       }
