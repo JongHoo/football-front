@@ -1,6 +1,6 @@
 # jay-football-front
 
-> Football League Infomation system with Vue.js
+> World Football League Infomation system with Vue.js
 
 ## Project setup
 ```
